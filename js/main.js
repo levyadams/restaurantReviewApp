@@ -160,6 +160,9 @@ createRestaurantHTML = (restaurant) => {
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
+  more.setAttribute("aria-label",`${restaurant.name} ${restaurant.neighborhood} ${restaurant.address}`);
+  // more.alt = `${restaurant.name} ${restaurant.neighborhood} ${restaurant.address}`
+
   li.append(more)
   
   return li
