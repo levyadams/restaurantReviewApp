@@ -8,3 +8,68 @@
         transform: translate(0%,60%);
     }
 }
+@media screen and (min-width:650px) and (max-width:900px){
+    .filter-options h2, #neighborhoods-select, #cuisines-select{
+        display: block;
+        margin-left:2%;
+        text-align: center;
+    }
+    
+    .filter-options #cuisines-select{
+        margin-left:38.5%;
+    }
+    
+    .filter-options #neighborhoods-select{
+        margin-left:32%;
+        
+      }
+      
+    #restaurants-list li {
+        width:calc((100% - 80px)/3);
+      }
+    #restaurants-list li h1 {
+        margin-top:-4%;
+        font-size: 1.5em;
+        margin:5%;
+      }
+      #restaurants-list p {
+        margin-left: 15%;
+      }
+    
+}
+@media screen and (min-width:450px) and (max-width:649px){
+    .filter-options h2, .filter-options #neighborhoods-select, .filter-options #cuisines-select{
+        margin-left:0%;
+        text-align: center;
+    }
+    
+
+    #restaurants-list li {
+        width:calc((100% - 60px)/2);
+      }
+    
+    #restaurants-list li h1 {
+        margin-top:-4%;
+        font-size: 1.4em;
+        margin:5%;
+      }
+
+}
+@media screen and (max-width:449px){
+    .filter-options h2, .filter-options #neighborhoods-select, .filter-options #cuisines-select{
+        font-size: 1.2em;
+        margin-left:0%;
+        text-align: center;
+    }
+
+    #restaurants-list li {
+        width: 100%;
+        transform: translate(-5%,0%);
+      }
+    #restaurants-list li h1 {
+        margin-top:-4%;
+        font-size: 1.2em;
+        margin:5%;
+      }
+
+}
