@@ -333,7 +333,6 @@ td.table-day{
   height:300px;
   width:50%;
   margin-top:2%;
-  margin-bottom: 15%;
   margin-left: 25%;
   margin-right: 25%;
   table-layout: fixed;
@@ -346,7 +345,6 @@ td.table-day{
   margin-left:.5%;
   margin-right:.5%;
   text-align: center;
-  margin-top:15%;
 }
 #reviews-container h2 {
   color: #ffffff;

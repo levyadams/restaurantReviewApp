@@ -20,7 +20,9 @@
         max-width: 100%;
     }
     #restaurant-hours td{
-        font-size:1.45em;
+        font-size:1.6em;
+        font-weight: bold;
+        margin:0;
         width:45%;
     }
     #restaurant-hours{
@@ -28,6 +30,7 @@
         width:90%;
         margin-left:5%;
         margin-right:5%;
+        height: 90%;
           
       }
    
