@@ -6,6 +6,7 @@
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
   <!-- Main CSS file -->
   <link rel="stylesheet" href="css/styles.css" type="text/css">
+  <link rel="stylesheet" href="css/responsive.css" type="text/css">
   <title>Restaurant Info</title>
 </head>
 
@@ -26,7 +27,7 @@
   <!-- End header -->
 
   <!-- Beginning main -->
-  <main id="maincontent">
+  <main id="details-maincontent">
     <!-- Beginning map -->
     <section id="map-container">
       <div id="map"></div>
@@ -34,17 +35,18 @@
     <!-- End map -->
     <!-- Beginning restaurant -->
     <section id="restaurant-container">
+      <p id="restaurant-cuisine"></p>
       <h1 id="restaurant-name"></h1>
       <img id="restaurant-img">
-      <p id="restaurant-cuisine"></p>
       <p id="restaurant-address"></p>
       <table id="restaurant-hours"></table>
     </section>
-    <!-- end restaurant -->
-    <!-- Beginning reviews -->
-    <section id="reviews-container">
-      <ul id="reviews-list"></ul>
-    </section>
+      <!-- end restaurant -->
+      <!-- Beginning reviews -->
+      <section id="reviews-container">
+        <ul id="reviews-list"></ul>
+      </section>
+      </ul>
     <!-- End reviews -->
   </main>
   <!-- End main -->
