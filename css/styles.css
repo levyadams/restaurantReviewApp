@@ -41,7 +41,6 @@ a img{
 }
 h1, h2, h3, h4, h5, h6 {
   font-family: Arial, Helvetica, sans-serif;
-  margin: 0 0 20px;
 }
 article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
 	display: block;
@@ -260,6 +259,9 @@ nav h1 a {
 .inside body{
   max-width: 100%;
 }
+.inside p{
+  color:black;
+}
 .inside header {
   width: 100%;
   z-index: 1000;
@@ -291,6 +293,7 @@ nav h1 a {
   border-top: 1px solid #fff;
 }
 #restaurant-cuisine {
+  font-size:1em;
   background-color: #333;
   color: #ddd;
   margin: 0 0 20px;
@@ -312,8 +315,6 @@ nav h1 a {
   width:85%;
   margin-right:7.5%;
   margin-left:7.5%;
-  
-  
 }
 tr:nth-child(even) {background-color: rgb(15, 15, 15);}
 tr:nth-child(odd) {background: rgb(10, 8, 19)}
@@ -345,6 +346,7 @@ td.table-day{
   margin-left:.5%;
   margin-right:.5%;
   text-align: center;
+  margin-top:15%;
 }
 #reviews-container h2 {
   color: #ffffff;
@@ -367,5 +369,8 @@ td.table-day{
   margin: 2%;
   font-size: 1.4em;
   font-weight:bold;
+}
+#reviews-list .restaurant-rating{
+  color: blue;
 }
 

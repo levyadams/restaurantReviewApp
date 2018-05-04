@@ -129,6 +129,7 @@ createReviewHTML = (review) => {
 
   const rating = document.createElement('p');
   rating.innerHTML = `Rating: ${review.rating}`;
+  rating.setAttribute("class","restaurant-rating");
   li.appendChild(rating);
 
   const comments = document.createElement('p');
