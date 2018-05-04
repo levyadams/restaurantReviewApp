@@ -270,7 +270,7 @@ nav h1 a {
   background-color:rgb(27, 26, 26);
 }
 .inside #details-maincontent {
-  font-size:2em;
+  font-size:1.5em;
   display: flex;
   flex-wrap: wrap;
   background-color: #4e3f3f;
@@ -307,7 +307,7 @@ nav h1 a {
 #restaurant-address {
   background-color: rgb(187, 187, 187);
   margin-top:-1%;
-  font-size: 1.2em;
+  font-size: 1.5em;
   color:rgb(0, 0, 0);
   width:85%;
   margin-right:7.5%;
@@ -321,17 +321,18 @@ td.table-time{
   color: rgb(255, 255, 255);
 }
 td.table-day{
-  color: rgb(52, 2, 231);
+  color: rgb(142, 110, 255);
 }
 #restaurant-hours td{
-  font-size:.75em;
+  font-size:1em;
+  padding:2%;
 }
 #restaurant-hours{
   display:block;
   height:300px;
   width:50%;
   margin-top:2%;
-  margin-bottom: 2%;
+  margin-bottom: 15%;
   margin-left: 25%;
   margin-right: 25%;
   table-layout: fixed;
@@ -340,7 +341,9 @@ td.table-day{
 }
 
 #reviews-container{
-  width: 50%;
+  width: 49%;
+  margin-left:.5%;
+  margin-right:.5%;
   text-align: center;
 }
 #reviews-container h2 {
@@ -352,8 +355,8 @@ td.table-day{
   padding: 0;
 }
 #reviews-list li {
-  background-color: #fff;
-  border: 2px solid #f3f3f3;
+  background-color: rgb(219, 216, 216);
+  border: 2px solid #0a091f;
   display: block;
   list-style-type: none;
   margin: 0 0 30px;
