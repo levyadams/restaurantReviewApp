@@ -147,6 +147,8 @@ createRestaurantHTML = (restaurant) => {
   image.className = 'restaurant-img';
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
   image.setAttribute("alt",`Image of ${restaurant.name}`);
+  image.setAttribute("srcset",`${restaurant.src}-550_small_1x.jpg 550w, ${restaurant.src}-800_medium_1x.jpg 800w,
+  ${restaurant.src}-1600_large_1x.jpg 1600w`);
   image.alt = `Image of ${restaurant.name}`;
   li.append(image);
   
