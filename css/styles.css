@@ -265,6 +265,8 @@ nav h1 a {
 /* ====================== Restaurant Details ====================== */
 
 .inside body{
+  display: flex;
+  flex-wrap: wrap;
   max-width: 100%;
 }
 .inside p{
@@ -305,7 +307,6 @@ nav h1 a {
   font-size:1.7em;
   background-color: #333;
   color: #ddd;
-  margin: 0 0 20px;
   text-align: center;
 }
 #restaurant-name {
@@ -331,7 +332,7 @@ td.table-time{
   color: rgb(255, 255, 255);
 }
 td.table-day{
-  color: rgb(142, 110, 255);
+  color: rgb(214, 203, 255);
 }
 #restaurant-hours td{
   font-size:1em;
@@ -347,6 +348,11 @@ td.table-day{
   table-layout: fixed;
   color:white;
   
+}
+#restaurant-image{
+  width: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 #reviews-container{
