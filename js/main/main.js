@@ -1,3 +1,4 @@
+
 let restaurants,
   neighborhoods,
   cuisines
@@ -7,19 +8,6 @@ var markers = []
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('../sw.js').then(function(registration) {
-      // Registration was successful
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }, function(err) {
-      // registration failed :(
-      console.log('ServiceWorker registration failed: ', err);
-    });
-  });
-}
-else{console.log('fuck');}
-
 document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
@@ -199,3 +187,20 @@ addMarkersToMap = (restaurants = self.restaurants) => {
     self.markers.push(marker);
   });
 }
+
+/**
+ * Service Worker
+ */
+
+var staticCacheName = 'restaurantReviews-static-v1';
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').then(function(registration) {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function(err) {
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
+
