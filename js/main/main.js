@@ -164,9 +164,15 @@ createRestaurantHTML = (restaurant) => {
   li.append(address);
   
   const more = document.createElement('a');
-  more.innerHTML = 'View Details';
+  const text = document.createElement('p');
+  const moreDiv = document.createElement('div');
+  moreDiv.setAttribute("class","more-div");
+  text.setAttribute("class","more-text");
+  more.append(moreDiv);
+  moreDiv.append(text);
+  text.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
-  more.setAttribute("aria-label",`${restaurant.name} ${restaurant.neighborhood} ${restaurant.address}`);
+  moreDiv.setAttribute("aria-label",`${restaurant.name} ${restaurant.neighborhood} ${restaurant.address}`);
   // more.alt = `${restaurant.name} ${restaurant.neighborhood} ${restaurant.address}`
 
   li.append(more)
