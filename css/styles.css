@@ -309,6 +309,9 @@ nav h1 a {
   color: #ddd;
   text-align: center;
 }
+#restaurant-img{
+  max-width: 100%;
+} 
 #restaurant-name {
   color: #ffffff;
   font-family: Arial,sans-serif;
