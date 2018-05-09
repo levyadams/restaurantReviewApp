@@ -41,10 +41,6 @@
     #reviews-list li p {
         font-size: 1.3em;
     }
-    #restaurant-hours{
-        font-size:.5em;
-        width:90%;
-    }
 }
 @media screen and (max-width: 650px){
     #restaurant-container, #reviews-container{
@@ -195,8 +191,6 @@
         margin-left:0%;
         text-align: center;
     }
-    
-    
     #restaurants-list li {
         width:calc((100% - 60px)/2);
     }
@@ -206,5 +200,16 @@
         font-size: 1.4em;
         margin:5%;
     }
-    
+}
+@media screen and (max-width:425px){
+    #restaurant-hours{
+        width:90%;
+        margin-right:5%;
+        margin-left:5%;
+    }
+    #restaurant-hours td{
+        font-size:.65em;
+        font-weight: bold;
+        margin:0;
+    }
 }
