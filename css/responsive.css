@@ -1,3 +1,99 @@
+@media screen and (max-width:449px){
+    .filter-options h2, .filter-options #neighborhoods-select, .filter-options #cuisines-select{
+        font-size: 1.2em;
+        margin-left:0%;
+        text-align: center;
+    }
+    .inside header nav h1{
+        margin-top:1%;
+        font-size:.75em;
+        transform: translate(0%,145%);
+    }
+    #restaurants-list li {
+        width: 100%;
+        transform: translate(-5%,0%);
+    }
+    #restaurants-list li h1 {
+        margin-top:-4%;
+        font-size: 1.4em;
+        margin:5%;
+    }
+    #restaurants-list li h2 {
+        margin-top:-4%;
+        font-size: 1.2em;
+        margin:3%;
+        transform: translate(-2.4%,0%);
+    }
+    #restaurant-cuisine {
+        font-size:1.2em;
+    }
+    #restaurant-name {
+        font-size: 1.2em;
+    }
+    #restaurant-address {
+        font-size: 1em;
+        font-weight: bold;
+    }
+    #reviews-container h2 {
+        font-size: 1.1em;
+        margin-top:0%;
+    }
+    #reviews-list li p {
+        font-size: 1.3em;
+    }
+    #restaurant-hours{
+        font-size:.5em;
+        width:90%;
+    }
+}
+@media screen and (max-width: 650px){
+    #restaurant-container, #reviews-container{
+        width:100%;
+    }
+}
+@media screen and (max-width:900px){
+    .inside nav h1 {
+        transform: translate(0%,60%);
+    }
+    .inside nav h1 a{
+        font-size:1.1em;
+        font-weight: bold;
+    }
+    .inside #breadcrumb{
+        padding: 0;
+        width: 100%;
+        font-size: 1.7em;
+        font-weight: bold;
+    }
+    #reviews-container h2 {
+        font-size: 1.3em;
+        margin-top:0%;
+    }
+    #reviews-list li p {
+        font-size: 1.25em;
+    }
+    #restaurant-name{
+        font-size: 1em;
+        margin-top:0;
+    }
+    #restaurant-address{
+        font-size: 1em;
+        font-weight:bold;
+    }
+    #restaurant-cuisine{
+        margin-top:0;
+        margin-bottom:2.5%;
+    }
+    #restaurant-hours{
+        font-size:.85em;
+        width:90%;
+    }
+    #restaurant-hours td{
+        font-size:.85em;
+        font-weight: bold;
+        margin:0;
+    }
+}
 @media screen and (min-width:1250px){
     #reviews-container ul{
         display: flex;
@@ -76,11 +172,21 @@
     }
     #restaurants-list li h1 {
         margin-top:-4%;
-        font-size: 1.5em;
+        font-size: 1.2em;
         margin:5%;
     }
     #restaurants-list p {
         margin-left: 15%;
+    }
+    #restaurant-hours{
+        width:90%;
+        margin-right:5%;
+        margin-left:5%;
+    }
+    #restaurant-hours td{
+        font-size:1.1em;
+        font-weight: bold;
+        margin:0;
     }
     
 }
@@ -101,98 +207,4 @@
         margin:5%;
     }
     
-}
-@media screen and (max-width:449px){
-    .filter-options h2, .filter-options #neighborhoods-select, .filter-options #cuisines-select{
-        font-size: 1.2em;
-        margin-left:0%;
-        text-align: center;
-    }
-    .inside header nav h1{
-        margin-top:1%;
-        font-size:.75em;
-        transform: translate(0%,145%);
-    }
-    #restaurants-list li {
-        width: 100%;
-        transform: translate(-5%,0%);
-    }
-    #restaurants-list li h1 {
-        margin-top:-4%;
-        font-size: 1.4em;
-        margin:5%;
-    }
-    #restaurants-list li h2 {
-        margin-top:-4%;
-        font-size: 1.2em;
-        margin:3%;
-        transform: translate(-2.4%,0%);
-    }
-    #restaurant-cuisine {
-        font-size:1.2em;
-    }
-    #restaurant-name {
-        font-size: 1.2em;
-    }
-    #restaurant-address {
-        font-size: 1em;
-        font-weight: bold;
-    }
-    #reviews-container h2 {
-        font-size: 1.1em;
-        margin-top:0%;
-    }
-    #reviews-list li p {
-        font-size: 1.3em;
-    }
-}
-@media screen and (max-width: 650px){
-    #restaurant-container, #reviews-container{
-        width:100%;
-    }
-}
-@media screen and (max-width:900px){
-    .inside nav h1 {
-        transform: translate(0%,60%);
-    }
-    .inside nav h1 a{
-        font-size:1.1em;
-        font-weight: bold;
-    }
-    .inside #breadcrumb{
-        padding: 0;
-        width: 100%;
-        font-size: 1.7em;
-        font-weight: bold;
-    }
-    #reviews-container h2 {
-        font-size: 1.3em;
-        margin-top:0%;
-    }
-    #reviews-list li p {
-        font-size: 1.25em;
-    }
-    #restaurant-name{
-        font-size: 1em;
-        margin-top:0;
-    }
-    #restaurant-address{
-        font-size: 1em;
-        font-weight:bold;
-    }
-    #restaurant-cuisine{
-        margin-top:0;
-        margin-bottom:2.5%;
-    }
-    #restaurant-hours{
-        font-size:1em;
-        width:80%;
-        margin-top:2%;
-        margin-left: 10%;
-        margin-right: 10%;
-        margin-bottom:0;
-    }
-    #restaurant-hours td{
-        font-size:.90em;
-    }
 }
