@@ -1,19 +1,24 @@
 //Ultra-lite service-worker, written somewhat by Levy Adams.
 //**---->https://github.com/levyadams<-----**//
 var staticCacheName = 'restaurantReviews-static-v2';
+//for some reason passing the cache in the function no work right, so do it outside of it like a dis
+var urlToCache = [
+  '/',
+  '/index.html',
+  '/restaurant.html',
+  '/css/styles.css',
+  '/css/responsive.css',
+  '/images/',
+  '/js/database/dbhelper.js',
+  '/js/main/main.js',
+  '/js/main/restaurant_info.js',
+];
 //we add a event listener for the "install" service worker event, triggered when the SW is installed properly.
 self.addEventListener('install', function(event) {
   //we add a waitUntil event for caches.open to load completely, then with a promise add the directories we want to cache.
     event.waitUntil(
       caches.open(staticCacheName).then(function(cache) {
-        return cache.addAll([
-          '/skeleton',
-          'js/main/main.js',
-          'js/main/restaurant_info.js',
-          'js/database/dbhelper.js',
-          'css/main.css',
-          'css/responsive.css'
-        ]);
+        return cache.addAll(urlToCache);
       })
     );
   });
