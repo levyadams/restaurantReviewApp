@@ -81,13 +81,14 @@
         margin-bottom:2.5%;
     }
     #restaurant-hours{
-        font-size:.85em;
-        width:90%;
+        font-size:1.1em;
+        transform: translate(10%,5%);
     }
     #restaurant-hours td{
-        font-size:.85em;
+        font-size:1.1em;
         font-weight: bold;
         margin:0;
+        margin-bottom:0;
     }
 }
 @media screen and (min-width:1250px){
