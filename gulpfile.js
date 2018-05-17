@@ -8,6 +8,7 @@ var sourcemaps = require('gulp-sourcemaps');
 //useref for piping
 var useref = require('gulp-useref');
 var uglify = require('gulp-uglify');
+var pump = require('pump');
 //gulp-if for ensuring file extensions.
 var gulpIf = require('gulp-if');
 //css concationator
@@ -29,30 +30,38 @@ var runSequence = require('run-sequence');
 
 //directory to watch file changes with live-reload
 var watchDirectory = [
-    'project1/**/*.js'
+    'app/**/*.js'
 ]
 gulp.task('default',function(callback){
     runSequence(['sync','watch']),callback
 });
 gulp.task('build',function(callback){
-    runSequence('clean','babel',['useref','responsive','fonts'],'imagemin',callback)
+    runSequence('clean','babel',['minify','useref','responsive','fonts'],'imagemin',callback)
 });
+gulp.task('babel', () =>
+    gulp.src('app/**/*.js')
+        .pipe(babel({
+            presets: ['env']
+        }))
+        .pipe(gulp.dest('dist'))
+);
 //Minify/uglify/concatonate files
 gulp.task('useref',function(){
     return gulp.src('app/*.html')
     .pipe(useref())
-    // .pipe(gulpIf('app/**/*.js',uglify()))
-    // .pipe(gulpIf('app/**/*.css',cssnano()))
+    .pipe(gulpIf('dist/**/*.js',uglify()))
+    .pipe(gulpIf('app/**/*.css',cssnano()))
     .pipe(gulp.dest('dist'));
 });
-gulp.task('babel',function(){
-    gulp.src('app/**/*.js')
-    .pipe(babel({
-        presets:['env']
-    }))
-    .pipe(gulp.dest('dist'));
-});
-
+gulp.task('minify', function (cb) {
+    pump([
+          gulp.src('dist/**/*.js'),
+          uglify(),
+          gulp.dest('dist')
+      ],
+      cb
+    );
+  });
 gulp.task('imagemin', function() {
     return gulp.src(['app/**/*.{gif,png,jpg}'])
         .pipe(cache(imagemin([
