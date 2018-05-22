@@ -52,13 +52,13 @@ gulp.task('transpile', () =>
     //babel env prefix recommended for transpiling es6 to es2015/other things as well
     .pipe(babel({
     //using gulp-babel documentation settings will break this
-    presets: ['env']
+    presets: ["env"]
     }))
-    //Removes spaces and indentation
+    // Removes spaces and indentation
     .pipe(uglify())
-    // //merge all js files into one
+    //merge all js files into one
     // .pipe(concat('main.min.js'))
-    //write all info to sourcemaps
+    // write all info to sourcemaps
     .pipe(sourcemaps.write('./sourceMaps'))
     //pipe to our distribution destination.
     .pipe(gulp.dest('dist/js'))
