@@ -150,6 +150,10 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
+    if(!restaurant.photograph){
+      return('images/no_image');
+    }
+    console.log('ran');
     return (`images/${restaurant.photograph}`);
   }
 
