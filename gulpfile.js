@@ -1,14 +1,15 @@
 var gulp = require('gulp');
+var browserify = require('browserify');
 //sass, html and css operations
 var sass = require('gulp-sass');
 var concatCss = require('gulp-concat-css');
 var htmlMin = require('gulp-htmlmin');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 //babel for polyfill es6
-var babel = require('gulp-babel');
+var babelify = require("babelify");
 //uglify to remove spaces and indents!
 var uglify = require('gulp-uglify');
-//concat to..concat!
-var concat = require('gulp-concat');
 //source-maps for easy debug
 var sourcemaps = require('gulp-sourcemaps');
 //responsive images!
@@ -37,32 +38,57 @@ gulp.task('dist',function(callback){
 });
 //first the dist folder is cleaned completely, then compile sass and finish it before loading the other plugins async.
 gulp.task('scripts',function(callback){
-    runSequence('clean','sass',['transpile','css','html'],callback)
+    runSequence('clean','sass',['browserify','css','html'],callback)
 });
 
+let customBrowserifyOperations = {
+    entries:['./main.js'],
+    debug:true
+};
+
+
 // =======================================================================// 
-// !                Script plugins                                        //        
+//                  Script plugins                                        //        
 // =======================================================================//  
 
-gulp.task('transpile', () =>
-    //set the source of the files we want to load. If you glob wrong here, it will try to go into node_modules
-    gulp.src('./js/*.js')
-    //init sourcemaps to collect data on the scripts
-    .pipe(sourcemaps.init())
-    //babel env prefix recommended for transpiling es6 to es2015/other things as well
-    .pipe(babel({
-    //using gulp-babel documentation settings will break this
-    presets: ["env"]
-    }))
-    // Removes spaces and indentation
-    .pipe(uglify())
-    //merge all js files into one
-    // .pipe(concat('main.min.js'))
-    // write all info to sourcemaps
-    .pipe(sourcemaps.write('./sourceMaps'))
-    //pipe to our distribution destination.
-    .pipe(gulp.dest('dist/js'))
-);
+
+gulp.task('browserify',()=>{
+    return browserify(
+        {
+          entries: './js/main.js',
+          debug: true
+        })
+        .transform(babelify, {
+          sourceMaps: true
+        })
+        .bundle()
+        .pipe(source('bundle.js'))
+        .pipe(buffer())
+        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(uglify())
+        .pipe(sourcemaps.write('./srcmaps'))
+        .pipe(gulp.dest('dist/js'));
+});
+
+// gulp.task('transpile', () =>
+//     //set the source of the files we want to load. If you glob wrong here, it will try to go into node_modules
+//     gulp.src('./js/*.js')
+//     //init sourcemaps to collect data on the scripts
+//     .pipe(sourcemaps.init())
+//     //babel env prefix recommended for transpiling es6 to es2015/other things as well
+//     .pipe(babel({
+//     //using gulp-babel documentation settings will break this
+//     presets: ["env"]
+//     }))
+//     // Removes spaces and indentation
+//     .pipe(uglify())
+//     //merge all js files into one
+//     // .pipe(concat('main.min.js'))
+//     // write all info to sourcemaps
+//     .pipe(sourcemaps.write('./sourceMaps'))
+//     //pipe to our distribution destination.
+//     .pipe(gulp.dest('dist/js'))
+// );
 gulp.task('sass', ()=>
     gulp.src('sass/**/*.+(scss|sass)')
     .pipe(sass())
@@ -80,7 +106,7 @@ gulp.task('html',()=>
 );
 
 // =======================================================================// 
-// !                Images and fonts                                      //        
+//                  Images and fonts                                      //        
 // =======================================================================//  
 gulp.task('fonts', function(){
     return gulp.src('app/fonts/**/*')
@@ -99,7 +125,7 @@ gulp.task('responsive',function(){
 });
 
 // =======================================================================// 
-// !                Gulp tasks                                            //        
+//                  Gulp tasks                                            //        
 // =======================================================================//  
 
 //watch directories
@@ -119,7 +145,7 @@ gulp.task('clean',function(){
 });
 
 // =======================================================================// 
-// !                Browser-sync Servers                                  //        
+//                  Browser-sync Servers                                  //        
 // =======================================================================//  
 
 gulp.task('dev-server', function() {
