@@ -41,12 +41,6 @@ gulp.task('scripts',function(callback){
     runSequence('clean','sass',['browserify','css','html'],callback)
 });
 
-let customBrowserifyOperations = {
-    entries:['./main.js'],
-    debug:true
-};
-
-
 // =======================================================================// 
 //                  Script plugins                                        //        
 // =======================================================================//  
