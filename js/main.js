@@ -1,3 +1,6 @@
+import DBHelper from './DBHelper';
+import dbPromise from './idb';
+
 
 let restaurants,
   neighborhoods,
