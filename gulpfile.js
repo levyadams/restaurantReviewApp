@@ -1,121 +1,140 @@
 var gulp = require('gulp');
-//browser-sync for live reloading.
-var browserSync = require('browser-sync').create();
+//sass, html and css operations
+var sass = require('gulp-sass');
+var concatCss = require('gulp-concat-css');
+var htmlMin = require('gulp-htmlmin');
 //babel for polyfill es6
 var babel = require('gulp-babel');
-//babel source-maps
-var sourcemaps = require('gulp-sourcemaps');
-//useref for piping
-var useref = require('gulp-useref');
+//uglify to remove spaces and indents!
 var uglify = require('gulp-uglify');
-var pump = require('pump');
-//gulp-if for ensuring file extensions.
-var gulpIf = require('gulp-if');
-//css concationator
-var cssnano = require('gulp-cssnano');
-//image optimization! Each one is a plugin below imagemin in this section.
-var imagemin = require('gulp-imagemin');
-var imageminPngquant = require('imagemin-pngquant');
-var imageminZopfli = require('imagemin-zopfli');
-var imageminMozjpeg = require('imagemin-mozjpeg'); //need to run 'brew install libpng'
-var imageminGiflossy = require('imagemin-giflossy');
+//concat to..concat!
+var concat = require('gulp-concat');
+//source-maps for easy debug
+var sourcemaps = require('gulp-sourcemaps');
 //responsive images!
 var responsive = require('gulp-responsive-images');
-//gulp cache
-var cache = require('gulp-cache');
 //gulp delete for cleaning
 var del = require('del');
 //run sequence to make sure each gulp command completes in the right order.
 var runSequence = require('run-sequence');
+//browser-sync for live server/editing/basic dev
+var browserSync = require('browser-sync').create('BS-server');
 
-//directory to watch file changes with live-reload
-var watchDirectory = [
-    'app/**/*.js'
-]
+// =======================================================================// 
+// !                Default and bulk tasks                                //        
+// =======================================================================//  
+
+//default runs when the user types 'gulp' into CLI
 gulp.task('default',function(callback){
-    runSequence(['sync','watch']),callback
+    runSequence('watch'),callback
 });
-gulp.task('build',function(callback){
-    runSequence('clean','babel',['minify','useref','responsive','fonts'],'imagemin',callback)
+//distribution command, 'gulp dist', will create a production ready folder and spin up a server to view the assets.
+//We optimize our scripts first, then copy over JSON data, convert images for responsiveness, copy over fonts.
+//the dist server runs only after everything is completed before it.
+
+gulp.task('dist',function(callback){
+    runSequence('scripts',['responsive','fonts','copy-data'],'dist-server',callback)
 });
-gulp.task('babel', () =>
-    gulp.src('app/**/*.js')
-        .pipe(babel({
-            presets: ['env']
-        }))
-        .pipe(gulp.dest('dist'))
+//first the dist folder is cleaned completely, then compile sass and finish it before loading the other plugins async.
+gulp.task('scripts',function(callback){
+    runSequence('clean','sass',['transpile','css','html'],callback)
+});
+
+// =======================================================================// 
+// !                Script plugins                                        //        
+// =======================================================================//  
+
+gulp.task('transpile', () =>
+    //set the source of the files we want to load. If you glob wrong here, it will try to go into node_modules
+    gulp.src('./js/*.js')
+    //init sourcemaps to collect data on the scripts
+    .pipe(sourcemaps.init())
+    //babel env prefix recommended for transpiling es6 to es2015/other things as well
+    .pipe(babel({
+    //using gulp-babel documentation settings will break this
+    presets: ['env']
+    }))
+    //Removes spaces and indentation
+    .pipe(uglify())
+    // //merge all js files into one
+    // .pipe(concat('main.min.js'))
+    //write all info to sourcemaps
+    .pipe(sourcemaps.write('./sourceMaps'))
+    //pipe to our distribution destination.
+    .pipe(gulp.dest('dist/js'))
 );
-//Minify/uglify/concatonate files
-gulp.task('useref',function(){
-    return gulp.src('app/*.html')
-    .pipe(useref())
-    .pipe(gulpIf('dist/**/*.js',uglify()))
-    .pipe(gulpIf('app/**/*.css',cssnano()))
-    .pipe(gulp.dest('dist'));
-});
-gulp.task('minify', function (cb) {
-    pump([
-          gulp.src('dist/**/*.js'),
-          uglify(),
-          gulp.dest('dist')
-      ],
-      cb
-    );
-  });
-gulp.task('imagemin', function() {
-    return gulp.src(['app/**/*.{gif,png,jpg}'])
-        .pipe(cache(imagemin([
-            //png
-            imageminPngquant({
-                speed: 1,
-                quality: 98 //lossy settings
-            }),
-            imageminZopfli({
-                more: true
-            }),
-            imageminGiflossy({
-                optimizationLevel: 3,
-                optimize: 3, 
-                lossy: 2
-            }),
-            //jpg lossless
-            imagemin.jpegtran({
-                progressive: true
-            }),
-            //jpg very light lossy, use vs jpegtran
-            imageminMozjpeg({
-                quality: 90
-            })
-        ])))
-        .pipe(gulp.dest('dist/images'));
+gulp.task('sass', ()=>
+    gulp.src('sass/**/*.+(scss|sass)')
+    .pipe(sass())
+    .pipe(gulp.dest('css'))
+);
+gulp.task('css',()=>
+    gulp.src('css/*.css',{base: 'c:/git/project'})
+    .pipe(concatCss('css/styles.css'))
+    .pipe(gulp.dest('dist'))
+);
+gulp.task('html',()=>
+    gulp.src('*.html')
+    // .pipe(htmlMin({collapseWhitespace:true}))
+    .pipe(gulp.dest('dist'))
+);
+
+// =======================================================================// 
+// !                Images and fonts                                      //        
+// =======================================================================//  
+gulp.task('fonts', function(){
+    return gulp.src('app/fonts/**/*')
+    .pipe(gulp.dest('dist/fonts'))
 });
 gulp.task('responsive',function(){
-    gulp.src('app/images/**/*')
+    gulp.src('images/*')
     .pipe(responsive({
         '*.jpg':[
-        {width:1600, suffix: '_large_1x', quality:100},
-        {width:800, suffix: '_medium_1x', quality:100},
+        {width:1600, suffix: '_large_1x', quality:40},
+        {width:800, suffix: '_medium_1x', quality:70},
         {width:550, suffix: '_small_1x', quality:100}
     ]
     }))
     .pipe(gulp.dest('dist/images'));
 });
-gulp.task('sync',function(){
-    browserSync.init({
-        server:{
-            baseDir:'app'
-        }
-    })
-});
+
+// =======================================================================// 
+// !                Gulp tasks                                            //        
+// =======================================================================//  
+
 //watch directories
-gulp.task('watch',['sync'],function(){
-    gulp.watch(watchDirectory,browserSync.reload);
+gulp.task('watch',['dev-server'],function(){
+    //we use the stream:true parameter to stream the sass files into the css before the reload.
+    gulp.watch('./sass/**/*.+(scss|sass)',['sass',browserSync.reload({stream:true})]);
+    gulp.watch('./css/*.css',browserSync.reload);
+    gulp.watch('./js/**/*.js',browserSync.reload);
+    gulp.watch('*.html',browserSync.reload);
 })
-gulp.task('fonts', function(){
-    return gulp.src('app/fonts/**/*')
-    .pipe(gulp.dest('dist/fonts'))
-});
+gulp.task('copy-data',()=>
+    gulp.src('data/*.json')
+    .pipe(gulp.dest('dist/data'))
+);
 gulp.task('clean',function(){
     return del.sync('dist');
 });
+
+// =======================================================================// 
+// !                Browser-sync Servers                                  //        
+// =======================================================================//  
+
+gulp.task('dev-server', function() {
+    browserSync.init({
+            port: 8000,
+            server: "./"
+        })
+});
+gulp.task('dist-server', function() {
+    browserSync.init({
+      server: "./dist",
+      port: 8000
+    })
+    browserSync.stream()
+});
+
+
 
