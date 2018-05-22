@@ -2,7 +2,7 @@ import idb from 'idb';
 
 
 
-     dbPromise = idb.open('test_db',1,function(upgradeDB){
+     let dbPromise = idb.open('test_db',1,function(upgradeDB){
         var keyValStore = upgradeDB.createObjectStore('keyval');
         keyValStore.put('world','hello');
     });
