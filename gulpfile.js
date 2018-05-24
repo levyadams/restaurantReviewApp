@@ -142,12 +142,12 @@ gulp.task('clean',function(){
 //                  Browser-sync Servers                                  //        
 // =======================================================================//  
 
-gulp.task('dev-server', function() {
-    browserSync.init({
-            port: 8000,
-            server: "./"
-        })
-});
+// gulp.task('dev-server', function() {
+//     browserSync.init({
+//             port: 8000,
+//             server: "./"
+//         })
+// });
 gulp.task('dist-server', function() {
     browserSync.init({
       server: "./dist",
