@@ -1,5 +1,8 @@
+import restaurant from './restaurant_info';
 import DBHelper from './DBHelper';
-import dbPromise from './idb';
+import style from '../css/styles.css';
+import responsive from '../css/responsive.css';
+
 
 
 

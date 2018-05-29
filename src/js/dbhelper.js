@@ -1,3 +1,5 @@
+import dbPromise from './idb';
+
 /**
  * Common database helper functions.
  */
