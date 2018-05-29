@@ -13,13 +13,16 @@
     "gulp": "gulp",
     "babel": "babel src -d build",
     "build": "webpack --config webpack.config.js",
-    "start": "webpack-dashboard -- webpack-dev-server build/bundle.js --open"
+    "start": "webpack-dashboard -- webpack-dev-server build/bundle.js --open",
+    "browse": "webpack --watch"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.7.0",
+    "browser-sync": "^2.24.4",
+    "browser-sync-webpack-plugin": "^2.2.2",
     "copy-webpack-plugin": "^4.5.1",
     "css-loader": "^0.28.11",
     "del": "^3.0.0",
