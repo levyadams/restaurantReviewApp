@@ -151,13 +151,20 @@ let createRestaurantHTML = (restaurant) => {
   name.innerHTML = restaurant.name;
   li.append(name);
   
-  const image = document.createElement('img');
-  image.className = 'restaurant-img';
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
-  image.setAttribute("alt",`Image of ${restaurant.name}`);
-  image.setAttribute("srcset",`${image.src}_small_1x.jpg 550w, ${image.src}_medium_1x.jpg 800w,
-  ${image.src}_large_1x.jpg 1600w`);
+  const image = document.createElement('picture');
+  const sourceJpeg = document.createElement('source');
+  const sourceWebp = document.createElement('source');
+  const imageSource = document.createElement('img'); 
+  imageSource.className = 'restaurant-img';
+  imageSource.src = DBHelper.imageUrlForRestaurant(restaurant);
+  sourceWebp.setAttribute("srcset",`${imageSource.src}_small_1x.webp 550w, ${imageSource.src}_medium_1x.webp 800w,
+  ${imageSource.src}_large_1x.webp 1600w`);
+  sourceJpeg.setAttribute("srcset",`${imageSource.src}_small_1x.jpg 550w, ${imageSource.src}_medium_1x.jpg 800w,
+  ${imageSource.src}_large_1x.jpg 1600w`);
+  imageSource.setAttribute("alt",`Image of ${restaurant.name}`);
   image.alt = `Image of ${restaurant.name}`;
+
+  image.append(sourceWebp,sourceJpeg,imageSource);
   li.append(image);
   
   const neighborhood = document.createElement('h2');

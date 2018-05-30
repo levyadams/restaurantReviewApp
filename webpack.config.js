@@ -25,31 +25,31 @@ module.exports = {
         {
           test: /\.css$/,
           loaders: ["style-loader","css-loader"]
-        },
-        { 
-          test: /\.(jpe?g|png|gif|svg)$/i,
-          loader: "url-loader?name=build/images/[name].[ext]"
         }
+        // { 
+        //   test: /\.(jpe?g|png|gif|svg)$/i,
+        //   loader: "url-loader?name=build/images/[name].[ext]"
+        // }
         
       ]
     },
     plugins: [
+      new webpackDashboard(),
+      new HtmlWebpackPlugin
+      ({
+        filename: 'index.html',
+        template: 'src/public/index.html'
+      }),
+      new HtmlWebpackPlugin
+      ({
+        filename: 'restaurant.html',
+        template: 'src/public/restaurant.html'
+      }),
       new BrowserSyncPlugin(
         {
           host: 'localhost',
           port: 3000,
           server: { baseDir: ['build'] }
         },
-      new webpackDashboard(),
-      new HtmlWebpackPlugin
-      ({
-      filename: 'index.html',
-      template: 'src/public/index.html'
-      }),
-      new HtmlWebpackPlugin
-      ({
-      filename: 'restaurant.html',
-      template: 'src/public/restaurant.html'
-      })
-      )]
+    )]
   };

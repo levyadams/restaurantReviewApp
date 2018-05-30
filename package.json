@@ -13,8 +13,10 @@
     "gulp": "gulp",
     "babel": "babel src -d build",
     "build": "webpack --config webpack.config.js",
-    "start": "webpack-dashboard -- webpack-dev-server build/bundle.js --open",
-    "browse": "webpack --watch"
+    "dev-server": "webpack-dashboard -- webpack-dev-server build/bundle.js --open",
+    "watch": "webpack --watch",
+    "start": "npm run build && npm run watch && npm run dev-server",
+    "dev": "npm run watch && npm run dev-server"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -29,6 +31,7 @@
     "file-loader": "^1.1.11",
     "gulp": "^3.9.1",
     "gulp-responsive-images": "0.0.3",
+    "gulp-webp": "^3.0.0",
     "html-webpack-plugin": "^3.2.0",
     "idb": "^2.1.2",
     "responsive-loader": "^1.1.0",
