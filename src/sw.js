@@ -6,12 +6,8 @@ var urlToCache = [
   '/',
   '/index.html',
   '/restaurant.html',
-  '/css/styles.css',
-  '/css/responsive.css',
   '/images/',
-  '/js/database/dbhelper.js',
-  '/js/main/main.js',
-  '/js/main/restaurant_info.js',
+  '/bundle.js'
 ];
 //we add a event listener for the "install" service worker event, triggered when the SW is installed properly.
 self.addEventListener('install', function(event) {

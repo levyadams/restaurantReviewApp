@@ -11,12 +11,11 @@
   "license": "MIT",
   "scripts": {
     "gulp": "gulp",
-    "babel": "babel src -d build",
-    "build": "webpack --config webpack.config.js",
+    "build-files": "webpack --config webpack.config.js",
     "dev-server": "webpack-dashboard -- webpack-dev-server build/bundle.js --open",
     "watch": "webpack --watch",
-    "start": "npm run build && npm run watch && npm run dev-server",
-    "dev": "npm run watch && npm run dev-server"
+    "build": "npm run build-files && npm run watch && npm run dev-server",
+    "start": "npm run watch && npm run dev-server"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
