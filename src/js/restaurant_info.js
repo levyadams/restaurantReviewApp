@@ -1,3 +1,5 @@
+import DBHelper from './DBHelper';
+
 let restaurant;
 var map;
 
@@ -18,7 +20,9 @@ var map;
       }
     });
   }
-  
+  document.addEventListener('DOMContentLoaded', (event) => {
+    fetchRestaurantFromURL();
+  });
   /**
    * Get current restaurant from page URL.
    */
@@ -56,12 +60,19 @@ var map;
     address.innerHTML = restaurant.address;
     
     const image = document.getElementById('restaurant-img');
-    image.className = 'restaurant-img'
-    image.alt=`Image of ${restaurant.name}`;
-    image.src = DBHelper.imageUrlForRestaurant(restaurant);
-    image.setAttribute("srcset",`${image.src}__550_small_1x.jpg 550w, ${image.src}__800_medium_1x.jpg 800w,
-    ${image.src}__1600_large_1x 1600w.jpg`);
+    image.className = 'restaurant-img';
+    const sourceJpeg = document.createElement('source');
+    const sourceWebp = document.createElement('source');
+    const imageSource = document.createElement('img'); 
+    imageSource.alt=`Image of ${restaurant.name}`;
+    imageSource.src = DBHelper.imageUrlForRestaurant(restaurant);
+    sourceWebp.setAttribute("srcset",`${imageSource.src}_small_1x.webp 550w, ${imageSource.src}_medium_1x.webp 800w,
+    ${imageSource.src}_large_1x.webp 1600w`);
+    sourceJpeg.setAttribute("srcset",`${imageSource.src}_small_1x.jpg 550w, ${imageSource.src}_medium_1x.jpg 800w,
+    ${imageSource.src}_large_1x.jpg 1600w`);
+    image.append(sourceWebp,sourceJpeg,imageSource);
     
+
     const cuisine = document.getElementById('restaurant-cuisine');
     cuisine.innerHTML = restaurant.cuisine_type;
     
@@ -187,10 +198,5 @@ var map;
     });
   }
 
-  exports.module={
-    fetchRestaurantFromURL,
-    fillRestaurantHTML,
-    fillRestaurantHoursHTML,
-    fillReviewsHTML
-  }
+ 
   

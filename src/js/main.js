@@ -18,6 +18,7 @@ var markers = []
 document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
+  console.log('ran');
   document.getElementById("neighborhoods-select").focus();
 });
 

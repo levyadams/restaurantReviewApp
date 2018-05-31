@@ -1,10 +1,28 @@
-import dbPromise from './idb';
+import idb from 'idb';
+
 
 /**
  * Common database helper functions.
  */
+var dbPromise = idb.open('restaurant_db', 1, upgradeDB => {
+  var store = upgradeDB.createObjectStore('restaurants',{
+    keyPath:'id',
+  });
+  store.createIndex('by-name', 'keys');
+});
 export default class DBHelper {
 
+  static addRestaurantsToDB(objects){
+    console.log(objects);
+    dbPromise.then(db => {
+      const tx = db.transaction('restaurants', 'readwrite');
+      let store = tx.objectStore('restaurants');
+      objects.forEach(function(object){
+        store.put(object);
+      });
+    });
+  };
+ 
   /**
    * Database URL.
    * Change this to restaurants.json file location on your server.
@@ -13,17 +31,26 @@ export default class DBHelper {
     const port = 1337 // Change this to your server port
     return `http://localhost:${port}/restaurants`;
   }
-
+  
   /**
    * Fetch all restaurants.
    */
+  
   static fetchRestaurants(callback) {
+        dbPromise.then(db => {
+          if(db){
+            let index = db.transaction('restaurants')
+            .objectStore('restaurants').index('by-name');
+            console.log('it ran!');
+            return index.getAll();
+          }
+    })
     let xhr = new XMLHttpRequest();
     xhr.open('GET', DBHelper.DATABASE_URL);
     xhr.onload = () => {
       if (xhr.status === 200) { // Got a success response from server!
         const restaurants = JSON.parse(xhr.responseText);
-        console.log(restaurants);
+        DBHelper.addRestaurantsToDB(restaurants);
         callback(null, restaurants);
       } else { // Oops!. Got an error from server.
         const error = (`Request failed. Returned status of ${xhr.status}`);
@@ -155,7 +182,6 @@ export default class DBHelper {
     if(!restaurant.photograph){
       return('images/no_image');
     }
-    console.log('ran');
     return (`images/${restaurant.photograph}`);
   }
 
