@@ -1,10 +1,4 @@
-import restaurant from './restaurant_info';
 import DBHelper from './DBHelper';
-import style from '../css/styles.css';
-import responsive from '../css/responsive.css';
-
-
-
 
 let restaurants,
   neighborhoods,
@@ -18,7 +12,6 @@ var markers = []
 document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
-  console.log('ran');
   document.getElementById("neighborhoods-select").focus();
 });
 

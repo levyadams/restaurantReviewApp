@@ -4,6 +4,7 @@ import idb from 'idb';
 /**
  * Common database helper functions.
  */
+let ranOnce = false;
 var dbPromise = idb.open('restaurant_db', 1, upgradeDB => {
   var store = upgradeDB.createObjectStore('restaurants',{
     keyPath:'id',
@@ -13,7 +14,6 @@ var dbPromise = idb.open('restaurant_db', 1, upgradeDB => {
 export default class DBHelper {
 
   static addRestaurantsToDB(objects){
-    console.log(objects);
     dbPromise.then(db => {
       const tx = db.transaction('restaurants', 'readwrite');
       let store = tx.objectStore('restaurants');
@@ -37,14 +37,14 @@ export default class DBHelper {
    */
   
   static fetchRestaurants(callback) {
-        dbPromise.then(db => {
-          if(db){
-            let index = db.transaction('restaurants')
-            .objectStore('restaurants').index('by-name');
-            console.log('it ran!');
-            return index.getAll();
-          }
-    })
+        if(ranOnce == false){
+          dbPromise.then(db => {
+              let index = db.transaction('restaurants')
+              .objectStore('restaurants').index('by-name');
+              ranOnce = true;
+              let items = index.getAll().then(function(list){callback(null,list);})
+        })
+      }
     let xhr = new XMLHttpRequest();
     xhr.open('GET', DBHelper.DATABASE_URL);
     xhr.onload = () => {

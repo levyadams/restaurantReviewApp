@@ -4,10 +4,13 @@ var staticCacheName = 'restaurantReviews-static-v2';
 //for some reason passing the cache in the function no work right, so do it outside of it like a dis
 var urlToCache = [
   '/',
-  '/index.html',
-  '/restaurant.html',
+  '/public/index.html',
+  '/public/restaurant.html',
   '/images/',
-  '/bundle.js'
+  '/js/dbhelper.js',
+  '/js/main.js',
+  '/js/restaurant_info.js'
+  
 ];
 //we add a event listener for the "install" service worker event, triggered when the SW is installed properly.
 self.addEventListener('install', function(event) {
