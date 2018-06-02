@@ -10,13 +10,20 @@ const responsive = require('gulp-responsive-images');
 const del = require('del');
 //run sequence to make sure each gulp command completes in the right order.
 const runSequence = require('run-sequence');
-//minify css
+//minify js apparently
 const minify = require('gulp-minify');
+const uglify = require('gulp-uglify');
 //no whitespaces html
 const htmlmin = require('gulp-htmlmin');
 //hot module pack reloading for pros
 //css minify toolset
 const cleanCSS = require('gulp-clean-css');
+const browserify = require('browserify');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const sourcemaps = require('gulp-sourcemaps');
+const babelify = require('babelify');
+
 
 // =======================================================================// 
 // !                Default and bulk tasks                                //        
@@ -80,9 +87,9 @@ gulp.task('scripts', function(callback) {
   });
 
 gulp.task('minify-html', function() {
-    return gulp.src('src/public/*.html')
+    return gulp.src('./src/*.html')
     .pipe(htmlmin({collapseWhitespace: true}))
-    .pipe(gulp.dest('build/public'))
+    .pipe(gulp.dest('build'))
     .pipe(browserSync.reload({
         stream: true
       }))
@@ -103,20 +110,25 @@ gulp.task('watch', ['minify-css','minify-html','babel'], function (){
     gulp.watch('src/public/*.html', ['minify-html']);  
 });
 
-gulp.task('babel', () =>
-gulp.src('src/js/*.js')
-.pipe(babel({
-    presets: ['env']
-}))
-.pipe(minify({
-    exclude: ['node_module']
-}))
-.pipe(gulp.dest('build/js'))
-.pipe(browserSync.reload({
-    stream: true
-  }))
-);
 
+gulp.task('babel', () => {
+    browserify({
+      entries: 'src/js/main.js',
+      debug: true
+    })
+    .transform(babelify, {
+        sourceMaps: true
+      })
+    .bundle()
+    .pipe(source('main.js'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(sourcemaps.write('./build/maps'))
+    .pipe(gulp.dest('./build/js'))
+    .pipe(browserSync.reload({
+        stream: true
+      }));
+  });
 // =======================================================================// 
 //                  copy stuff                                            //        
 // =======================================================================// 
@@ -137,7 +149,7 @@ gulp.task('copy-sw', function () {
 gulp.task('browse', function() {
     browserSync.init({
       server: {
-        baseDir: 'build/public'
+        baseDir: 'build'
       },
     })
   })
