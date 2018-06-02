@@ -1,1 +1,1 @@
-```npm install && gulp && npm run build && npm run start``` however the images don't load properly unless you open the index.html in the /build/ folder directly.
+```npm install && gulp && npm run build```
