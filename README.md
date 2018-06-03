@@ -1,1 +1,1 @@
-```npm install && gulp && npm run build```
+```npm install && gulp build```
