@@ -36,5 +36,6 @@
   "bugs": {
     "url": "https://github.com/levyadams/restaurantReviewApp/issues"
   },
-  "homepage": "https://github.com/levyadams/restaurantReviewApp#readme"
+  "homepage": "https://github.com/levyadams/restaurantReviewApp#readme",
+  "dependencies": {}
 }

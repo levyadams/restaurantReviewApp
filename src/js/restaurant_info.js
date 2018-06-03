@@ -3,6 +3,9 @@ import DBHelper from './DBHelper';
 let restaurant;
 var map;
 
+document.addEventListener('DOMContentLoaded', (event) => {
+  fetchRestaurantFromURL();
+});
 
 
   window.initMap = () => {

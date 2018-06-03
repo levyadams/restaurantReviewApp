@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
   document.getElementById("neighborhoods-select").focus();
+  updateRestaurants();
 });
 
 /**
