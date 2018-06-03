@@ -23,9 +23,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
     });
   }
-  document.addEventListener('DOMContentLoaded', (event) => {
-    fetchRestaurantFromURL();
-  });
+  
   /**
    * Get current restaurant from page URL.
    */
