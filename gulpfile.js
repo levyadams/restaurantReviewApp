@@ -120,7 +120,7 @@ gulp.task('babel', () => {
         sourceMaps: true
       })
     .bundle()
-    .pipe(source('main.js'))
+    .pipe(source('bundle.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(sourcemaps.write('./build/maps'))

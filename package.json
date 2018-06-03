@@ -27,6 +27,7 @@
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.0",
     "gulp-webp": "^3.0.0",
+    "idb": "^2.1.2",
     "run-sequence": "^2.2.1",
     "util": "^0.10.3",
     "vinyl-buffer": "^1.0.1",

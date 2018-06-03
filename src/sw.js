@@ -1,15 +1,12 @@
 //Ultra-lite service-worker, written somewhat by Levy Adams.
 //**---->https://github.com/levyadams<-----**//
-var staticCacheName = 'restaurantReviews-static-v2';
+var staticCacheName = 'restaurantReviews-static-v3';
 //for some reason passing the cache in the function no work right, so do it outside of it like a dis
 var urlToCache = [
-  '/',
-  '/public/index.html',
-  '/public/restaurant.html',
+  '/index.html',
+  '/restaurant.html',
   '/images/',
-  '/js/dbhelper.js',
-  '/js/main.js',
-  '/js/restaurant_info.js'
+  '/js/bundle.js'
   
 ];
 //we add a event listener for the "install" service worker event, triggered when the SW is installed properly.
@@ -47,13 +44,13 @@ self.addEventListener('install', function(event) {
   //items from the current skeleton framework that exist in the cache.
   self.addEventListener('fetch', function(event) {
     //we take the url request
-    var requestedUrl = new URL(event.request.url);
+    // var requestedUrl = new URL(event.request.url);
    //if the root request is from the same origin..
-    if(requestedUrl.origin===location.origin){
+    if(even.request.url.origin===location.origin){
       //if the pathname involves anything to do with the entire directory...
-      if(requestedUrl.pathname ==='/'){
+      if(even.request.url ==='/'){
         //respond with the cache data instead. Wow, magic.
-        event.respondWith(caches.match('skeleton'));
+        event.respondWith(caches.match(even.request));
       }
     }
   //If the origin is not the same as the root origin, we check the cache still, and if nothing is there

@@ -37,14 +37,14 @@ export default class DBHelper {
    */
   
   static fetchRestaurants(callback) {
-        if(ranOnce == false){
-          dbPromise.then(db => {
-              let index = db.transaction('restaurants')
-              .objectStore('restaurants').index('by-name');
-              ranOnce = true;
-              let items = index.getAll().then(function(list){callback(null,list);})
-        })
-      }
+    if(ranOnce == true){
+      dbPromise.then(db => {
+        let index = db.transaction('restaurants')
+        .objectStore('restaurants').index('by-name');
+        let items = index.getAll().then(function(list){callback(null,list);})
+      })
+    }
+    ranOnce = true;
     let xhr = new XMLHttpRequest();
     xhr.open('GET', DBHelper.DATABASE_URL);
     xhr.onload = () => {
