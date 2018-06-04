@@ -27,7 +27,11 @@ var markers = []
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
-  console.log(window.location.pathname);
+  if(window.location.pathname === "/restaurant.html"){
+    console.log('disran');
+    fetchRestaurantFromURL();
+    fillBreadcrumb();
+  }
   if(window.location.pathname ==="/"){
     fetchNeighborhoods();
     fetchCuisines();

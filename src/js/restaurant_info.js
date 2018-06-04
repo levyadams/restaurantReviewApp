@@ -4,10 +4,13 @@ let restaurant;
 var map;
 
 document.addEventListener('DOMContentLoaded', (event) => {
-  if(window.location.pathname ==="/restaurant"){
-
+  console.log('ficky');
+  if(window.location.pathname === "/restaurant.html"){
+    console.log('disran');
     fetchRestaurantFromURL();
+    fillBreadcrumb();
   }
+  
   
 });
 
@@ -22,7 +25,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
           center: restaurant.latlng,
           scrollwheel: false
         });
-        fillBreadcrumb();
         DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
       }
     });
