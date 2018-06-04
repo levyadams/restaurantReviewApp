@@ -24,7 +24,6 @@ const buffer = require('vinyl-buffer');
 const sourcemaps = require('gulp-sourcemaps');
 const babelify = require('babelify');
 
-
 // =======================================================================// 
 // !                Default and bulk tasks                                //        
 // =======================================================================//  
@@ -133,13 +132,13 @@ gulp.task('babel', () => {
 //                  copy stuff                                            //        
 // =======================================================================// 
 gulp.task('copy-data', function () {
-    gulp.src('./src/data/*.json')
-        .pipe(gulp.dest('/build/data'));
+    gulp.src('src/data')
+        .pipe(gulp.dest('build/data'));
 });
 
 gulp.task('copy-sw', function () {
-    gulp.src('./src/sw.js')
-        .pipe(gulp.dest('/build/'));
+    gulp.src('src/sw.js')
+        .pipe(gulp.dest('build/'));
 });
 
 // =======================================================================// 

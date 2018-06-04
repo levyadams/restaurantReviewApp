@@ -1,8 +1,25 @@
 import DBHelper from './DBHelper';
 
+/**
+ * Service Worker
+ */
+//if the browser supports service worker. This can and needs to be scaled in a commercial scale.
+if ('serviceWorker' in navigator) {
+  //add event listener to the, "loaded" event that the page sends after it has downloaded all the things.
+  window.addEventListener('load', function() {
+    //we tell the browsers service worker to register our script as its main functional script, then on a promise we either
+    //tell the user hey you did it or wow you did not do it and spit out either response.
+    navigator.serviceWorker.register('/sw.js').then(function(response) {
+      console.log('ServiceWorker registration successful with scope: ', response.scope);
+    }, function(err) {
+      console.log('ServiceWorker registration failed: ', err);
+      //at this point sw.js runs. Turn the page.
+    });
+  });
+}
 let restaurants,
-  neighborhoods,
-  cuisines
+neighborhoods,
+cuisines
 var map
 var markers = []
 
@@ -10,10 +27,13 @@ var markers = []
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
-  fetchNeighborhoods();
-  fetchCuisines();
-  document.getElementById("neighborhoods-select").focus();
-  updateRestaurants();
+  console.log(window.location.pathname);
+  if(window.location.pathname ==="/"){
+    fetchNeighborhoods();
+    fetchCuisines();
+    document.getElementById("neighborhoods-select").focus();
+    updateRestaurants();
+  }
 });
 
 /**
@@ -121,7 +141,7 @@ let resetRestaurants = (restaurants) => {
 
   // Remove all map markers
   // self.markers.forEach(m => m.setMap(null));
-  self.markers = [];
+  // self.markers = [];
   self.restaurants = restaurants;
 }
 
@@ -202,21 +222,4 @@ let addMarkersToMap = (restaurants = self.restaurants) => {
   });
 }
 
-/**
- * Service Worker
- */
-//if the browser supports service worker. This can and needs to be scaled in a commercial scale.
-if ('serviceWorker' in navigator) {
-  //add event listener to the, "loaded" event that the page sends after it has downloaded all the things.
-  window.addEventListener('load', function() {
-    //we tell the browsers service worker to register our script as its main functional script, then on a promise we either
-    //tell the user hey you did it or wow you did not do it and spit out either response.
-    navigator.serviceWorker.register('/sw.js').then(function(response) {
-      console.log('ServiceWorker registration successful with scope: ', response.scope);
-    }, function(err) {
-      console.log('ServiceWorker registration failed: ', err);
-      //at this point sw.js runs. Turn the page.
-    });
-  });
-}
 
