@@ -1,39 +1,34 @@
 import DBHelper from './DBHelper';
 
-let restaurant;
-var map;
-
-document.addEventListener('DOMContentLoaded', (event) => {
-  console.log('ficky');
-  if(window.location.pathname === "/restaurant.html"){
-    console.log('disran');
-    fetchRestaurantFromURL();
-    fillBreadcrumb();
-  }
-  
-  
-});
 
 
-  window.initMap = () => {
-    fetchRestaurantFromURL((error, restaurant) => {
-      if (error) { // Got an error!
-        console.error(error);
-      } else {
-        self.map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 16,
-          center: restaurant.latlng,
-          scrollwheel: false
-        });
-        DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
-      }
-    });
-  }
+class restaurant{
+  constructor(){
+    
+    
+    let restaurant;
+    var map;
+
+    initMap = () => {
+      fetchRestaurantFromURL((error, restaurant) => {
+        if (error) { // Got an error!
+          console.error(error);
+        } else {
+          self.map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 16,
+            center: restaurant.latlng,
+            scrollwheel: false
+          });
+          DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
+        }
+      });
+    }
+    window.initMap = this.initMap.bind(this);
   
   /**
    * Get current restaurant from page URL.
    */
-  let fetchRestaurantFromURL = (callback) => {
+   fetchRestaurantFromURL = (callback) => {
     if (self.restaurant) { // restaurant already fetched!
       callback(null, self.restaurant)
       return;
@@ -58,7 +53,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /**
    * Create restaurant HTML and add it to the webpage
    */
-  let fillRestaurantHTML = (restaurant = self.restaurant) => {
+   fillRestaurantHTML = (restaurant = self.restaurant) => {
     const name = document.getElementById('restaurant-name');
     name.innerHTML = restaurant.name;
     
@@ -95,7 +90,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
    * Create restaurant operating hours HTML table and add it to the webpage.
    */
   
-  let fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => {
+   fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => {
     const hours = document.getElementById('restaurant-hours');
     for (let key in operatingHours) {
       const row = document.createElement('tr');
@@ -117,7 +112,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /**
    * Create all reviews HTML and add them to the webpage.
    */
-  let fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+   fillReviewsHTML = (reviews = self.restaurant.reviews) => {
     const container = document.getElementById('reviews-container');
     const title = document.createElement('h2');
     title.innerHTML = 'Reviews';
@@ -139,7 +134,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /**
    * Create review HTML and add it to the webpage.
    */
-  let createReviewHTML = (review) => {
+   createReviewHTML = (review) => {
     const li = document.createElement('li');
     const name = document.createElement('p');
     name.innerHTML = review.name;
@@ -164,7 +159,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /**
    * Add restaurant name to the breadcrumb navigation menu
    */
-  let fillBreadcrumb = (restaurant=self.restaurant) => {
+
+   fillBreadcrumb = (restaurant=self.restaurant) => {
     const breadcrumb = document.getElementById('breadcrumb');
     const li = document.createElement('li');
     li.innerHTML = restaurant.name;
@@ -174,7 +170,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   /**
    * Get a parameter by name from page URL.
    */
-  let getParameterByName = (name, url) => {
+
+   getParameterByName = (name, url) => {
     if (!url)
     url = window.location.href;
     name = name.replace(/[\[\]]/g, '\\$&');
@@ -186,6 +183,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
     return '';
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
   }
+}
+}
+document.addEventListener('DOMContentLoaded', (event) => {
+  let restaurant = new restaurant();
+}
+);
   
  
  

@@ -30,7 +30,7 @@ const babelify = require('babelify');
 
 //main task for building production dir
 gulp.task('build',function(callback){
-    runSequence('clean','webp',['responsive-jpg','responsive-webp','copy-data','copy-sw'],'scripts'),callback
+    runSequence('clean','webp',['responsive-jpg','responsive-webp','copy-sw'],'scripts'),callback
 });
 
 //delete build to start over from scratch
@@ -103,14 +103,14 @@ gulp.task('minify-css', () => {
       }))
 });
 
-gulp.task('watch', ['minify-css','minify-html','babel'], function (){
+gulp.task('watch', ['minify-css','minify-html','babel-main','babel-restaurant'], function (){
     gulp.watch('src/css/**/*.css', ['minify-css']);
-    gulp.watch('src/js/**/*.js', ['babel']); 
+    gulp.watch('src/js/**/*.js', ['babel-main','babel-restaurant']); 
     gulp.watch('src/public/*.html', ['minify-html']);  
 });
 
 
-gulp.task('babel', () => {
+gulp.task('babel-main', () => {
     browserify({
       entries: 'src/js/main.js',
       debug: true
@@ -119,10 +119,29 @@ gulp.task('babel', () => {
         sourceMaps: true
       })
     .bundle()
-    .pipe(source('bundle.js'))
+    .pipe(source('main.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(sourcemaps.write('./build/maps'))
+    .pipe(sourcemaps.write('./maps'))
+    .pipe(gulp.dest('./build/js'))
+    .pipe(browserSync.reload({
+        stream: true
+      }));
+  });
+  
+gulp.task('babel-restaurant', () => {
+    browserify({
+      entries: 'src/js/restaurant_info.js',
+      debug: true
+    })
+    .transform(babelify, {
+        sourceMaps: true
+      })
+    .bundle()
+    .pipe(source('restaurant_info.js'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(sourcemaps.write('./maps'))
     .pipe(gulp.dest('./build/js'))
     .pipe(browserSync.reload({
         stream: true
@@ -131,10 +150,10 @@ gulp.task('babel', () => {
 // =======================================================================// 
 //                  copy stuff                                            //        
 // =======================================================================// 
-gulp.task('copy-data', function () {
-    gulp.src('src/data')
-        .pipe(gulp.dest('build/data'));
-});
+// gulp.task('copy-data', function () {
+//     gulp.src('src/data')
+//         .pipe(gulp.dest('build/data'));
+// });
 
 gulp.task('copy-sw', function () {
     gulp.src('src/sw.js')

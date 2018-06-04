@@ -29,7 +29,7 @@
   <main id="details-maincontent">
     <!-- Beginning map -->
     <section id="map-container">
-        <button class="map-button" onclick="initMap()">Enable Map!</button>
+        <!-- <button class="map-button" onclick="initMap()">Enable Map!</button> -->
       <div id="map"></div>
     </section>
     <!-- End map -->
@@ -56,8 +56,8 @@
   </footer>
   <!-- End footer -->
   <!-- Google Maps -->
-  <script src="./js/bundle.js" type="text/javascript"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnnIFc7IxBDVxIos6xskKNvzS7w0ef4Qw&libraries=places"></script>
+  <script src="./js/restaurant_info.js" type="text/javascript"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnnIFc7IxBDVxIos6xskKNvzS7w0ef4Qw&libraries=places&callback=initMap"></script>
   
 </body>
 
