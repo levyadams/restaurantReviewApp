@@ -9,13 +9,13 @@ class Main{
   constructor(){
     
     window.initMap = this.initMap.bind(this);
+    this.fetchNeighborhoods();
+    this.fetchCuisines();
     let restaurants,
     neighborhoods,
     cuisines
     var map
     var markers = []
-    this.fetchNeighborhoods();
-    this.fetchCuisines();
   }
   
     
@@ -40,11 +40,12 @@ class Main{
    */
   
    fetchNeighborhoods(){
+     console.log('ran');
     DBHelper.fetchNeighborhoods((error, neighborhoods) => {
       if (error) { // Got an error
         console.error(error);
       } else {
-        self.neighborhoods = neighborhoods;
+        self.neighborhoods = this.neighborhoods;
         this.fillNeighborhoodsHTML();
       }
     });
@@ -124,20 +125,20 @@ class Main{
   
    resetRestaurants(restaurants){
     // Remove all restaurants
-    self.restaurants = [];
+    this.restaurants = [];
     const ul = document.getElementById('restaurants-list');
     ul.innerHTML = '';
     
     // Remove all map markers
-    self.markers.forEach(m => m.setMap(null));
-    self.markers = [];
-    self.restaurants = restaurants;
+    this.markers.forEach(m => m.setMap(null));
+    this.markers = [];
+    this.restaurants = restaurants;
   }
   
   /**
    * Create all restaurants HTML and add them to the webpage.
    */
-   fillRestaurantsHTML(restaurants = self.restaurants){
+   fillRestaurantsHTML(restaurants = this.restaurants){
     const ul = document.getElementById('restaurants-list');
     restaurants.forEach(restaurant => {
       ul.append(createRestaurantHTML(restaurant));
@@ -200,14 +201,14 @@ class Main{
   /**
    * Add markers for current restaurants to the map.
    */
-   addMarkersToMap(restaurants = self.restaurants){
+   addMarkersToMap(restaurants = this.restaurants){
     restaurants.forEach(restaurant => {
       // Add marker to the map
       const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
       google.maps.event.addListener(marker, 'click', () => {
         window.location.href = marker.url
       });
-      self.markers.push(marker);
+      this.markers.push(marker);
     });
   }
 }
