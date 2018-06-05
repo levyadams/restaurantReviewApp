@@ -4,12 +4,13 @@ import DBHelper from './DBHelper';
 
 class restaurant{
   constructor(){
-    
+    window.initMap = this.initMap.bind(this);
     
     let restaurant;
     var map;
+  }
 
-    initMap = () => {
+    initMap(){
       fetchRestaurantFromURL((error, restaurant) => {
         if (error) { // Got an error!
           console.error(error);
@@ -23,12 +24,11 @@ class restaurant{
         }
       });
     }
-    window.initMap = this.initMap.bind(this);
   
   /**
    * Get current restaurant from page URL.
    */
-   fetchRestaurantFromURL = (callback) => {
+   fetchRestaurantFromURL(callback){
     if (self.restaurant) { // restaurant already fetched!
       callback(null, self.restaurant)
       return;
@@ -53,7 +53,7 @@ class restaurant{
   /**
    * Create restaurant HTML and add it to the webpage
    */
-   fillRestaurantHTML = (restaurant = self.restaurant) => {
+   fillRestaurantHTML(restaurant = self.restaurant){
     const name = document.getElementById('restaurant-name');
     name.innerHTML = restaurant.name;
     
@@ -90,7 +90,7 @@ class restaurant{
    * Create restaurant operating hours HTML table and add it to the webpage.
    */
   
-   fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => {
+   fillRestaurantHoursHTML(operatingHours = self.restaurant.operating_hours){
     const hours = document.getElementById('restaurant-hours');
     for (let key in operatingHours) {
       const row = document.createElement('tr');
@@ -112,7 +112,7 @@ class restaurant{
   /**
    * Create all reviews HTML and add them to the webpage.
    */
-   fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+   fillReviewsHTML(reviews = self.restaurant.reviews){
     const container = document.getElementById('reviews-container');
     const title = document.createElement('h2');
     title.innerHTML = 'Reviews';
@@ -134,7 +134,7 @@ class restaurant{
   /**
    * Create review HTML and add it to the webpage.
    */
-   createReviewHTML = (review) => {
+   createReviewHTML(review){
     const li = document.createElement('li');
     const name = document.createElement('p');
     name.innerHTML = review.name;
@@ -160,7 +160,7 @@ class restaurant{
    * Add restaurant name to the breadcrumb navigation menu
    */
 
-   fillBreadcrumb = (restaurant=self.restaurant) => {
+   fillBreadcrumb(restaurant=self.restaurant){
     const breadcrumb = document.getElementById('breadcrumb');
     const li = document.createElement('li');
     li.innerHTML = restaurant.name;
@@ -171,7 +171,7 @@ class restaurant{
    * Get a parameter by name from page URL.
    */
 
-   getParameterByName = (name, url) => {
+   getParameterByName(name, url){
     if (!url)
     url = window.location.href;
     name = name.replace(/[\[\]]/g, '\\$&');
@@ -184,7 +184,7 @@ class restaurant{
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
   }
 }
-}
+
 document.addEventListener('DOMContentLoaded', (event) => {
   let restaurant = new restaurant();
 }

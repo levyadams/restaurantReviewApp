@@ -24,6 +24,7 @@ var dbPromise = idb.open('restaurant_db', 1, upgradeDB => {
   });
   store.createIndex('by-name', 'keys');
 });
+
 export default class DBHelper {
 
   static addRestaurantsToDB(objects){
