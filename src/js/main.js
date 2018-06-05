@@ -46,7 +46,7 @@ class Main{
         console.error(error);
       } else {
         this.neighborhoods = neighborhoods;
-        this.fillNeighborhoodsHTML();
+        this.fillNeighborhoodsHTML(neighborhoods);
       }
     });
   }
@@ -114,7 +114,7 @@ class Main{
         console.error(error);
       } else {
         this.resetRestaurants(restaurants);
-        this.fillRestaurantsHTML();
+        this.fillRestaurantsHTML(restaurants);
       }
     })
   }
