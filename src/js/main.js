@@ -15,7 +15,7 @@ class Main{
     neighborhoods,
     cuisines
     var map
-    var markers = []
+    let markers = []
   }
   
     
@@ -24,7 +24,7 @@ class Main{
       lat: 40.722216,
       lng: -73.987501
     };
-    self.map = new google.maps.Map(document.getElementById('map'), {
+    this.map = new google.maps.Map(document.getElementById('map'), {
       zoom: 12,
       center: loc,
       scrollwheel: false
@@ -45,7 +45,7 @@ class Main{
       if (error) { // Got an error
         console.error(error);
       } else {
-        self.neighborhoods = this.neighborhoods;
+        this.neighborhoods = neighborhoods;
         this.fillNeighborhoodsHTML();
       }
     });
@@ -55,7 +55,7 @@ class Main{
    * Set neighborhoods HTML.
    */
   
-   fillNeighborhoodsHTML(neighborhoods = self.neighborhoods){
+   fillNeighborhoodsHTML(neighborhoods = this.neighborhoods){
     const select = document.getElementById('neighborhoods-select');
     neighborhoods.forEach(neighborhood => {
       const option = document.createElement('option');
@@ -75,7 +75,7 @@ class Main{
       if (error) { // Got an error!
         console.error(error);
       } else {
-        self.cuisines = cuisines;
+        this.cuisines = cuisines;
         this.fillCuisinesHTML();
       }
     });
@@ -85,7 +85,7 @@ class Main{
    * Set cuisines HTML.
    */
   
-   fillCuisinesHTML(cuisines = self.cuisines){
+   fillCuisinesHTML(cuisines = this.cuisines){
     const select = document.getElementById('cuisines-select');
     
     cuisines.forEach(cuisine => {
@@ -204,7 +204,7 @@ class Main{
    addMarkersToMap(restaurants = this.restaurants){
     restaurants.forEach(restaurant => {
       // Add marker to the map
-      const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
+      const marker = DBHelper.mapMarkerForRestaurant(restaurant, this.map);
       google.maps.event.addListener(marker, 'click', () => {
         window.location.href = marker.url
       });
