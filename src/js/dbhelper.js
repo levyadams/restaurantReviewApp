@@ -1,8 +1,42 @@
+import idb from 'idb';
+
+if ('serviceWorker' in navigator) {
+  //add event listener to the, "loaded" event that the page sends after it has downloaded all the things.
+  window.addEventListener('load', function() {
+    //we tell the browsers service worker to register our script as its main functional script, then on a promise we either
+    //tell the user hey you did it or wow you did not do it and spit out either response.
+    navigator.serviceWorker.register('/sw.js').then(function(response) {
+      console.log('ServiceWorker registration successful with scope: ', response.scope);
+    }, function(err) {
+      console.log('ServiceWorker registration failed: ', err);
+      //at this point sw.js runs. Turn the page.
+    });
+  });
+}
 /**
  * Common database helper functions.
  */
-class DBHelper {
 
+let ranOnce = false;
+var dbPromise = idb.open('restaurant_db', 1, upgradeDB => {
+  var store = upgradeDB.createObjectStore('restaurants',{
+    keyPath:'id',
+  });
+  store.createIndex('by-name', 'keys');
+});
+
+export default class DBHelper {
+
+  static addRestaurantsToDB(objects){
+    dbPromise.then(db => {
+      const tx = db.transaction('restaurants', 'readwrite');
+      let store = tx.objectStore('restaurants');
+      objects.forEach(function(object){
+        store.put(object);
+      });
+    });
+  };
+ 
   /**
    * Database URL.
    * Change this to restaurants.json file location on your server.
@@ -11,16 +45,29 @@ class DBHelper {
     const port = 1337 // Change this to your server port
     return `http://localhost:${port}/restaurants`;
   }
-
+  
   /**
    * Fetch all restaurants.
    */
+  
   static fetchRestaurants(callback) {
+    if(ranOnce == true){
+      dbPromise.then(db => {
+        let index = db.transaction('restaurants')
+        .objectStore('restaurants').index('by-name');
+        let items = index.getAll().then(function(list){callback(null,list);})
+      })
+    }
+    ranOnce = true;
     let xhr = new XMLHttpRequest();
     xhr.open('GET', DBHelper.DATABASE_URL);
     xhr.onload = () => {
       if (xhr.status === 200) { // Got a success response from server!
         const restaurants = JSON.parse(xhr.responseText);
+<<<<<<< HEAD:src/js/dbhelper.js
+=======
+        DBHelper.addRestaurantsToDB(restaurants);
+>>>>>>> master:src/js/dbhelper.js
         callback(null, restaurants);
       } else { // Oops!. Got an error from server.
         const error = (`Request failed. Returned status of ${xhr.status}`);
@@ -185,6 +232,7 @@ class DBHelper {
   }
 
 }
+<<<<<<< HEAD:src/js/dbhelper.js
 // /**
 //  * Service Worker
 //  */
@@ -202,3 +250,7 @@ class DBHelper {
 //     });
 //   });
 // }
+=======
+
+
+>>>>>>> master:src/js/dbhelper.js

@@ -7,7 +7,12 @@
 /coverage
 
 # production
+<<<<<<< HEAD
 build/
+=======
+
+build
+>>>>>>> master
 
 # misc
 .DS_Store

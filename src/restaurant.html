@@ -4,7 +4,10 @@
 <head>
   <!-- Normalize.css for better cross-browser consistency -->
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
+  <link rel="stylesheet" href="./css/styles.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="./css/responsive.css" type="text/css" media="screen" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<<<<<<< HEAD:src/restaurant.html
   <!-- Main CSS file -->
   <link rel="preload" href="css/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="css/styles.css"></noscript>
@@ -13,8 +16,10 @@
 
   
   <title>Restaurant Info</title>
+=======
+  <title>Restaurant Info!</title>
+>>>>>>> master:src/restaurant.html
 </head>
-
 <body class="inside">
   <!-- Beginning header -->
   <header>
@@ -23,6 +28,7 @@
       <li><a href="/">Home</a></li>
     </ul>
     <nav>
+
       <!-- Beginning breadcrumb -->
       <!-- End breadcrumb -->
       <h1><a href="/">Restaurant Reviews</a></h1>
@@ -30,19 +36,19 @@
     <!-- End nav -->
   </header>
   <!-- End header -->
-
   <!-- Beginning main -->
   <main id="details-maincontent">
     <!-- Beginning map -->
     <section id="map-container">
+        <!-- <button class="map-button" onclick="initMap()">Enable Map!</button> -->
       <div id="map"></div>
     </section>
     <!-- End map -->
     <!-- Beginning restaurant -->
     <section id="restaurant-container">
+      <picture id="restaurant-img">
       <p id="restaurant-cuisine"></p>
       <h2 id="restaurant-name"></h2>
-      <img id="restaurant-img">
       <p id="restaurant-address"></p>
       <h3><table id="restaurant-hours"></table></h3>
     </section>
@@ -55,12 +61,12 @@
     <!-- End reviews -->
   </main>
   <!-- End main -->
-
   <!-- Beginning footer -->
   <footer id="footer">
     Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
   </footer>
   <!-- End footer -->
+<<<<<<< HEAD:src/restaurant.html
 
   <!-- Beginning scripts -->
   <!-- Database helpers -->
@@ -74,6 +80,12 @@
   <!-- Google Maps -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap"></script>  <!-- End scripts -->
 
+=======
+  <!-- Google Maps -->
+  <script src="./js/restaurant_info.js" type="text/javascript"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnnIFc7IxBDVxIos6xskKNvzS7w0ef4Qw&libraries=places&callback=initMap"></script>
+  
+>>>>>>> master:src/restaurant.html
 </body>
 
 </html>
