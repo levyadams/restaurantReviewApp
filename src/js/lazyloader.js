@@ -22,7 +22,6 @@ function handleIntersect(entries, observer) {
   entries.forEach(entry => {
     // Are we in viewport?
     if (entry.intersectionRatio > 0) {
-      console.log('lazy image(s) loaded.');
       // Stop watching and load the image
       let image = entry.target;
       let url = image.getAttribute('data-src');

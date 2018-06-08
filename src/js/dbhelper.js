@@ -1,6 +1,19 @@
 /**
  * Common database helper functions.
  */
+if ('serviceWorker' in navigator) {
+  //add event listener to the, "loaded" event that the page sends after it has downloaded all the things.
+  window.addEventListener('load', function() {
+    //we tell the browsers service worker to register our script as its main functional script, then on a promise we either
+    //tell the user hey you did it or wow you did not do it and spit out either response.
+    navigator.serviceWorker.register('/sw.js').then(function(response) {
+      console.log('ServiceWorker registration successful with scope: ', response.scope);
+    }, function(err) {
+      console.log('ServiceWorker registration failed: ', err);
+      //at this point sw.js runs. Turn the page.
+    });
+  });
+}
 class DBHelper {
 
   /**

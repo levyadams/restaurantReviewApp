@@ -7,6 +7,9 @@ var markers = []
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
+window.addEventListener('load', (event) => {
+  loadMap();
+});
 document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
@@ -37,6 +40,7 @@ let fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
     option.innerHTML = neighborhood;
     option.value = neighborhood;
     select.append(option);
+    updateRestaurants();
   });
 }
 
@@ -67,7 +71,12 @@ let fillCuisinesHTML = (cuisines = self.cuisines) => {
     select.append(option);
   });
 }
-
+function loadMap(){
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap';
+  document.body.appendChild(script);
+};
 /**
  * Initialize Google map, called from HTML.
  */
@@ -130,61 +139,67 @@ let fillRestaurantsHTML = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
   });
-  addMarkersToMap();
+  if (map) {
+    addMarkersToMap();
+  }
 }
 
 /**
  * Create restaurant HTML.
  */
 let createRestaurantHTML = (restaurant) => {
+  console.log('ran1');
   const li = document.createElement('li');
   li.className = 'list-item';
   li.id = restaurant.id;
   const name = document.createElement('h1');
   name.innerHTML = restaurant.name;
   li.append(name);
-  
+
   const image = document.createElement('picture');
-  const imageSource = document.createElement('img'); 
-  imageSource.className ='restaurant-img';
+  const imageSource = document.createElement('img');
+  imageSource.className = 'restaurant-img';
   const sourceJpeg = document.createElement('source');
   const sourceWebp = document.createElement('source');
   imageURL = DBHelper.imageUrlForRestaurant(restaurant);
-  imageSource.setAttribute('src','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mOcPiWrHgAFdQIWjjm6lwAAAABJRU5ErkJggg==');
-  imageSource.setAttribute('data-src',`${imageURL}_small_1x.webp`);
-  sourceWebp.setAttribute("srcset",`${imageURL}_small_1x.webp 550w, ${imageURL}_medium_1x.webp 800w,
+  if (imageURL === '/images/undefined') {
+    imageURL = '/images/no_image';
+  }
+  imageSource.setAttribute('src', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mOcPiWrHgAFdQIWjjm6lwAAAABJRU5ErkJggg==');
+  imageSource.setAttribute('data-src', `${imageURL}_small_1x.webp`);
+  sourceWebp.setAttribute("srcset", `${imageURL}_small_1x.webp 550w, ${imageURL}_medium_1x.webp 800w,
   ${imageURL}_large_1x.webp 1600w`);
-  sourceJpeg.setAttribute("srcset",`${imageURL}_small_1x.jpg 550w, ${imageURL}_medium_1x.jpg 800w,
+  sourceJpeg.setAttribute("srcset", `${imageURL}_small_1x.jpg 550w, ${imageURL}_medium_1x.jpg 800w,
   ${imageURL}_large_1x.jpg 1600w`);
-  imageSource.setAttribute("alt",`Image of ${restaurant.name}`);
+  imageSource.setAttribute("alt", `Image of ${restaurant.name}`);
   image.alt = `Image of ${restaurant.name}`;
-  image.append(imageSource,sourceWebp,sourceJpeg);
+  image.append(imageSource, sourceWebp, sourceJpeg);
   li.append(image);
-  
+
   const neighborhood = document.createElement('h2');
   neighborhood.innerHTML = restaurant.neighborhood;
   li.append(neighborhood);
-  
-  
+
+
   const address = document.createElement('p');
   address.innerHTML = restaurant.address;
-  address.setAttribute("aria-label","Address");
+  address.setAttribute("aria-label", "Address");
   li.append(address);
-  
+
   const more = document.createElement('a');
   const text = document.createElement('p');
   const moreDiv = document.createElement('div');
-  moreDiv.setAttribute("class","more-div");
-  text.setAttribute("class","more-text");
+  moreDiv.setAttribute("class", "more-div");
+  text.setAttribute("class", "more-text");
   more.append(moreDiv);
   moreDiv.append(text);
   text.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
-  moreDiv.setAttribute("aria-label",`${restaurant.name} ${restaurant.neighborhood} ${restaurant.address}`);
+  moreDiv.setAttribute("aria-label", `${restaurant.name} ${restaurant.neighborhood} ${restaurant.address}`);
   // more.alt = `${restaurant.name} ${restaurant.neighborhood} ${restaurant.address}`
 
   li.append(more)
-  
+
   return li
 }
 
