@@ -6,7 +6,7 @@ function createObserver() {
   var options = {
     root: null,
     rootMargin: "0px",
-    threshold: .2
+    threshold: .01
   };
   const images = document.querySelectorAll('.restaurant-img');
   const observer = new IntersectionObserver(handleIntersect, options);
