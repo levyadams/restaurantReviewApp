@@ -347,14 +347,9 @@ td.table-time{
 td.table-day{
   color: rgb(214, 203, 255);
 }
-#restaurant-hours td{
-  font-size:1em;
-  padding:2%;
-}
+
 #restaurant-hours{
   display:block;
-  height:300px;
-  width:50%;
   margin-top:2%;
   margin-left: 25%;
   margin-right: 25%;

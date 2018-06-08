@@ -80,16 +80,7 @@
         margin-top:0;
         margin-bottom:2.5%;
     }
-    #restaurant-hours{
-        font-size:1.1em;
-        transform: translate(10%,5%);
-    }
-    #restaurant-hours td{
-        font-size:1.1em;
-        font-weight: bold;
-        margin:0;
-        margin-bottom:0;
-    }
+    
 }
 @media screen and (min-width:1250px){
     #reviews-container ul{
@@ -129,25 +120,26 @@
         margin:0;
         max-width: 100%;
     }
-    #restaurant-hours td{
-        font-size:1.2em;
-        font-weight: bold;
-        margin:0;
-        width:45%;
-    }
-    #restaurant-hours{
-        table-layout: fixed;
-        width:90%;
-        margin-left:5%;
-        margin-right:5%;
-        height: 90%;
-    }
     #reviews-container h2 {
         font-size: 1.5em;
         margin-top:0%;
     }
     #reviews-list li p {
         font-size: 1.5em;
+    }
+    #restaurant-hours{
+        font-size:1.3em;
+        width:90%;
+        margin-right:5%;
+        margin-left:5%;
+        font-size: .8em;
+        max-height: 100%;
+        
+    }
+    #restaurant-hours td{
+        font-size:1.1em;
+        font-weight: bold;
+        margin:0;
     }
 }
 @media screen and (min-width:650px) and (max-width:900px){
@@ -176,16 +168,19 @@
         margin-left: 15%;
     }
     #restaurant-hours{
+        font-size:1.3em;
         width:90%;
         margin-right:5%;
         margin-left:5%;
+        font-size: .8em;
+        max-height: 100%;
+        
     }
     #restaurant-hours td{
         font-size:1.1em;
         font-weight: bold;
         margin:0;
     }
-    
 }
 @media screen and (min-width:450px) and (max-width:649px){
     .filter-options h2, .filter-options #neighborhoods-select, .filter-options #cuisines-select{
@@ -202,7 +197,7 @@
         margin:5%;
     }
 }
-@media screen and (max-width:425px){
+@media screen and (max-width:650px){
     #restaurant-hours{
         width:90%;
         margin-right:5%;

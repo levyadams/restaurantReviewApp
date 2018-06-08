@@ -1,9 +1,23 @@
+
 let restaurant;
 var map;
 
 /**
  * Initialize Google map, called from HTML.
  */
+window.addEventListener('load', (event) => {
+  loadMap();
+});
+document.addEventListener('DOMContentLoaded', (event) => {
+  fetchRestaurantFromURL((error,restaurant)=>{if(error){console.error(error);}});
+});
+function loadMap(){
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap';
+  document.body.appendChild(script);
+};
+
 window.initMap = () => {
   fetchRestaurantFromURL((error, restaurant) => {
     if (error) { // Got an error!
@@ -55,21 +69,28 @@ let fillRestaurantHTML = (restaurant = self.restaurant) => {
   const address = document.getElementById('restaurant-address');
   address.setAttribute("aria-label","Restaurant Adress");
   address.innerHTML = restaurant.address;
-
-  const image = document.getElementById('restaurant-img');
-  const imageSource = document.createElement('img'); 
-    imageSource.id = 'restaurant-img';
-    imageSource.className = 'lazyload';
-    const sourceJpeg = document.createElement('source');
-    const sourceWebp = document.createElement('source');
-    imageSource.alt=`Image of ${restaurant.name}`;
-    imageSource.src = DBHelper.imageUrlForRestaurant(restaurant);
-    sourceWebp.setAttribute("srcset",`${imageSource.src}_small_1x.webp 550w, ${imageSource.src}_medium_1x.webp 800w,
-    ${imageSource.src}_large_1x.webp 1600w`);
-    sourceJpeg.setAttribute("srcset",`${imageSource.src}_small_1x.jpg 550w, ${imageSource.src}_medium_1x.jpg 800w,
-    ${imageSource.src}_large_1x.jpg 1600w`);
-    image.append(imageSource,sourceWebp,sourceJpeg);
-
+  
+  const image = document.createElement('picture');
+  const imageSource = document.getElementById('details-img');
+  imageSource.className = 'restaurant-img';
+  const sourceJpeg = document.createElement('source');
+  const sourceWebp = document.createElement('source');
+  imageURL = DBHelper.imageUrlForRestaurant(restaurant);
+  if (imageURL === '/images/undefined') {
+    imageURL = '/images/no_image';
+  }
+  imageSource.setAttribute('src', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mOcPiWrHgAFdQIWjjm6lwAAAABJRU5ErkJggg==');
+  imageSource.setAttribute('data-src', `${imageURL}_small_1x.webp`);
+  sourceWebp.setAttribute("srcset", `${imageURL}_small_1x.webp 550w, ${imageURL}_medium_1x.webp 800w,
+  ${imageURL}_large_1x.webp 1600w`);
+  sourceJpeg.setAttribute("srcset", `${imageURL}_small_1x.jpg 550w, ${imageURL}_medium_1x.jpg 800w,
+  ${imageURL}_large_1x.jpg 1600w`);
+  imageSource.setAttribute("alt", `Image of ${restaurant.name}`);
+  image.alt = `Image of ${restaurant.name}`;
+  image.append(imageSource, sourceWebp, sourceJpeg);
+  let container = document.getElementById('restaurant-container');
+  container.insertBefore(image, container.childNodes[1]); 
+  
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
 

@@ -90,7 +90,6 @@ window.initMap = () => {
     center: loc,
     scrollwheel: false
   });
-  updateRestaurants();
 }
 
 /**
@@ -148,7 +147,6 @@ let fillRestaurantsHTML = (restaurants = self.restaurants) => {
  * Create restaurant HTML.
  */
 let createRestaurantHTML = (restaurant) => {
-  console.log('ran1');
   const li = document.createElement('li');
   li.className = 'list-item';
   li.id = restaurant.id;
