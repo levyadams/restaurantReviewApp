@@ -1,140 +1,183 @@
-var gulp = require('gulp');
-//sass, html and css operations
-var sass = require('gulp-sass');
-var concatCss = require('gulp-concat-css');
-var htmlMin = require('gulp-htmlmin');
-//babel for polyfill es6
-var babel = require('gulp-babel');
-//uglify to remove spaces and indents!
-var uglify = require('gulp-uglify');
-//concat to..concat!
-var concat = require('gulp-concat');
-//source-maps for easy debug
-var sourcemaps = require('gulp-sourcemaps');
+const gulp = require('gulp');
+const babel = require('gulp-babel');
+//browser loader
+var browserSync = require('browser-sync').create();
+//webp images for optimization on some browsers
+const webp = require('gulp-webp');
 //responsive images!
-var responsive = require('gulp-responsive-images');
+const responsive = require('gulp-responsive-images');
 //gulp delete for cleaning
-var del = require('del');
+const del = require('del');
 //run sequence to make sure each gulp command completes in the right order.
-var runSequence = require('run-sequence');
-//browser-sync for live server/editing/basic dev
-var browserSync = require('browser-sync').create('BS-server');
+const runSequence = require('run-sequence');
+//minify js apparently
+const minify = require('gulp-minify');
+const uglify = require('gulp-uglify');
+//no whitespaces html
+const htmlmin = require('gulp-htmlmin');
+//hot module pack reloading for pros
+//css minify toolset
+const cleanCSS = require('gulp-clean-css');
+const browserify = require('browserify');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const sourcemaps = require('gulp-sourcemaps');
+const babelify = require('babelify');
 
 // =======================================================================// 
 // !                Default and bulk tasks                                //        
 // =======================================================================//  
 
-//default runs when the user types 'gulp' into CLI
-gulp.task('default',function(callback){
-    runSequence('watch'),callback
-});
-//distribution command, 'gulp dist', will create a production ready folder and spin up a server to view the assets.
-//We optimize our scripts first, then copy over JSON data, convert images for responsiveness, copy over fonts.
-//the dist server runs only after everything is completed before it.
-
-gulp.task('dist',function(callback){
-    runSequence('scripts',['responsive','fonts','copy-data'],'dist-server',callback)
-});
-//first the dist folder is cleaned completely, then compile sass and finish it before loading the other plugins async.
-gulp.task('scripts',function(callback){
-    runSequence('clean','sass',['transpile','css','html'],callback)
+//main task for building production dir
+gulp.task('build', function (callback) {
+    runSequence('clean', 'webp', ['responsive-jpg', 'responsive-webp', 'copy-sw', 'copy-js'], 'scripts'), callback
 });
 
-// =======================================================================// 
-// !                Script plugins                                        //        
-// =======================================================================//  
-
-gulp.task('transpile', () =>
-    //set the source of the files we want to load. If you glob wrong here, it will try to go into node_modules
-    gulp.src('./js/*.js')
-    //init sourcemaps to collect data on the scripts
-    .pipe(sourcemaps.init())
-    //babel env prefix recommended for transpiling es6 to es2015/other things as well
-    .pipe(babel({
-    //using gulp-babel documentation settings will break this
-    presets: ["env"]
-    }))
-    // Removes spaces and indentation
-    .pipe(uglify())
-    //merge all js files into one
-    // .pipe(concat('main.min.js'))
-    // write all info to sourcemaps
-    .pipe(sourcemaps.write('./sourceMaps'))
-    //pipe to our distribution destination.
-    .pipe(gulp.dest('dist/js'))
-);
-gulp.task('sass', ()=>
-    gulp.src('sass/**/*.+(scss|sass)')
-    .pipe(sass())
-    .pipe(gulp.dest('css'))
-);
-gulp.task('css',()=>
-    gulp.src('css/*.css',{base: 'c:/git/project'})
-    .pipe(concatCss('css/styles.css'))
-    .pipe(gulp.dest('dist'))
-);
-gulp.task('html',()=>
-    gulp.src('*.html')
-    // .pipe(htmlMin({collapseWhitespace:true}))
-    .pipe(gulp.dest('dist'))
-);
-
-// =======================================================================// 
-// !                Images and fonts                                      //        
-// =======================================================================//  
-gulp.task('fonts', function(){
-    return gulp.src('app/fonts/**/*')
-    .pipe(gulp.dest('dist/fonts'))
+//delete build to start over from scratch
+gulp.task('clean', function () {
+    return del.sync('build');
 });
-gulp.task('responsive',function(){
-    gulp.src('images/*')
-    .pipe(responsive({
-        '*.jpg':[
-        {width:1600, suffix: '_large_1x', quality:40},
-        {width:800, suffix: '_medium_1x', quality:70},
-        {width:550, suffix: '_small_1x', quality:100}
-    ]
-    }))
-    .pipe(gulp.dest('dist/images'));
+
+//for easy reference
+gulp.task('dev', function (callback) {
+    runSequence('scripts'), callback
 });
 
 // =======================================================================// 
-// !                Gulp tasks                                            //        
+//                  Images and fonts                                      //        
 // =======================================================================//  
 
-//watch directories
-gulp.task('watch',['dev-server'],function(){
-    //we use the stream:true parameter to stream the sass files into the css before the reload.
-    gulp.watch('./sass/**/*.+(scss|sass)',['sass',browserSync.reload({stream:true})]);
-    gulp.watch('./css/*.css',browserSync.reload);
-    gulp.watch('./js/**/*.js',browserSync.reload);
-    gulp.watch('*.html',browserSync.reload);
-})
-gulp.task('copy-data',()=>
-    gulp.src('data/*.json')
-    .pipe(gulp.dest('dist/data'))
+gulp.task('responsive-jpg', function () {
+    gulp.src('src/images/*')
+        .pipe(responsive({
+            '*.jpg': [
+                { width: 1600, suffix: '_large_1x', quality: 40 },
+                { width: 800, suffix: '_medium_1x', quality: 70 },
+                { width: 550, suffix: '_small_1x', quality: 100 }
+            ]
+        }))
+        .pipe(gulp.dest('build/images'));
+});
+
+gulp.task('responsive-webp', function () {
+    gulp.src('src/images/*')
+        .pipe(responsive({
+            '*.webp': [
+                { width: 1600, suffix: '_large_1x', quality: 40 },
+                { width: 800, suffix: '_medium_1x', quality: 70 },
+                { width: 550, suffix: '_small_1x', quality: 80 }
+            ]
+        }))
+        .pipe(gulp.dest('build/images'));
+});
+
+gulp.task('webp', () =>
+    gulp.src('src/images/*.jpg')
+        .pipe(webp())
+        .pipe(gulp.dest('src/images'))
 );
-gulp.task('clean',function(){
-    return del.sync('dist');
+
+// =======================================================================// 
+//                  Gulp tasks                                            //        
+// =======================================================================//  
+
+gulp.task('scripts', function (callback) {
+    runSequence('watch', 'browse', callback);
+});
+
+gulp.task('watch', ['minify-css', 'minify-html', 'copy-js'], function () {
+    gulp.watch('src/css/**/*.css', ['minify-css']);
+    gulp.watch('src/js/**/*.js', ['copy-js']);
+    gulp.watch('src/public/*.html', ['minify-html']);
+});
+
+//   gulp.task('babel', function(callback) {
+//     runSequence(['babel-main','babel-restaurant'],callback);
+//   });
+
+gulp.task('minify-html', function () {
+    return gulp.src('src/*.html')
+        .pipe(htmlmin({ collapseWhitespace: false }))
+        .pipe(gulp.dest('build'))
+        .pipe(browserSync.reload({
+            stream: true
+        }))
+});
+
+gulp.task('minify-css', () => {
+    return gulp.src('src/css/*.css')
+        .pipe(cleanCSS({ compatibility: 'ie8' }))
+        .pipe(gulp.dest('build/css'))
+        .pipe(browserSync.reload({
+            stream: true
+        }))
+});
+
+// gulp.task('babel-main', () => {
+//     browserify({
+//       entries: 'src/js/main.js',
+//       debug: true
+//     })
+//     .transform(babelify, {
+//         sourceMaps: true
+//       })
+//     .bundle()
+//     .pipe(source('main.js'))
+//     .pipe(buffer())
+//     .pipe(sourcemaps.init({loadMaps: true}))
+//     .pipe(sourcemaps.write('./maps'))
+//     .pipe(gulp.dest('./build/js'))
+//     .pipe(browserSync.reload({
+//         stream: true
+//       }));
+//   });
+
+// gulp.task('babel-restaurant', () => {
+//     browserify({
+//       entries: 'src/js/restaurant_info.js',
+//       debug: true
+//     })
+//     .transform(babelify, {
+//         sourceMaps: true
+//       })
+//     .bundle()
+//     .pipe(source('restaurant_info.js'))
+//     .pipe(buffer())
+//     .pipe(sourcemaps.init({loadMaps: true}))
+//     .pipe(sourcemaps.write('./maps'))
+//     .pipe(gulp.dest('./build/js'))
+//     .pipe(browserSync.reload({
+//         stream: true
+//       }));
+//   });
+// =======================================================================// 
+//                  copy stuff                                            //        
+// =======================================================================// 
+// gulp.task('copy-data', function () {
+//     gulp.src('src/data')
+//         .pipe(gulp.dest('build/data'));
+// });
+
+gulp.task('copy-sw', function () {
+    gulp.src('src/sw.js')
+        .pipe(gulp.dest('build/'));
+});
+gulp.task('copy-js', function () {
+    gulp.src('src/js/**.js')
+        .pipe(gulp.dest('build/js'))
+        .pipe(browserSync.reload({
+            stream: true
+        }));
 });
 
 // =======================================================================// 
-// !                Browser-sync Servers                                  //        
+//                   Servers                                              //        
 // =======================================================================//  
 
-gulp.task('dev-server', function() {
+gulp.task('browse', function () {
     browserSync.init({
-            port: 8000,
-            server: "./"
-        })
-});
-gulp.task('dist-server', function() {
-    browserSync.init({
-      server: "./dist",
-      port: 8000
+        server: {
+            baseDir: 'build'
+        },
     })
-    browserSync.stream()
-});
-
-
-
+})

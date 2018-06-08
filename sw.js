@@ -8,8 +8,6 @@ var urlToCache = [
   '/restaurant.html',
   '/css/styles.css',
   '/css/responsive.css',
-  '/images/',
-  '/js/database/dbhelper.js',
   '/js/main/main.js',
   '/js/main/restaurant_info.js',
 ];
