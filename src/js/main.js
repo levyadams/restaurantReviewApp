@@ -1,11 +1,12 @@
 import DBHelper from './dbhelper.js';
 import lazy from './lazyloader.js';
 
+let mapURL;
 let restaurants,
   neighborhoods,
   cuisines
-var map
-var markers = []
+let map
+let markers = []
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
@@ -74,12 +75,13 @@ let fillCuisinesHTML = (cuisines = self.cuisines) => {
     select.append(option);
   });
 }
-function loadMap(){
-  console.log('map loaded');
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap';
-  document.body.appendChild(script);
+function loadMap() {
+  let staticMap = document.createElement('img');
+  staticMap.className = 'map-image';
+  staticMap.src = markersForStaticMap();
+  map = document.getElementById('map');
+  map.append(staticMap);
+
 };
 /**
  * Initialize Google map, called from HTML.
@@ -129,7 +131,7 @@ let resetRestaurants = (restaurants) => {
   const ul = document.getElementById('restaurants-list');
   ul.innerHTML = '';
   // Remove all map markers
-  if(self.markers){
+  if (self.markers) {
     self.markers.forEach(m => m.setMap(null));
     self.markers = [];
   }
@@ -209,13 +211,27 @@ let createRestaurantHTML = (restaurant) => {
  */
 let addMarkersToMap = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
+    console.log(map);
     // Add marker to the map
-    const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
-    google.maps.event.addListener(marker, 'click', () => {
-      window.location.href = marker.url;
-    });
-    markers.push(marker);
+    // const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
+    // google.maps.event.addListener(marker, 'click', () => {
+    //   window.location.href = marker.url;
+    // });
+    // markers.push(marker);
   });
+  return mapAdd;
+}
+
+function markersForStaticMap() {
+  let mapAdd = 'https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&size=640x320&zoom=11.5&scale=2&maptype=roadmap'
+
+
+  self.restaurants.forEach(restaurant => {
+    console.log(`${restaurant.latlng.lat} and ${restaurant.latlng.lng}`);
+    let tmp = `&markers=${restaurant.latlng.lat},${restaurant.latlng.lng}`;
+    mapAdd += tmp;
+  })
+  return mapAdd;
 }
 
 
