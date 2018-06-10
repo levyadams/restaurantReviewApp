@@ -1,21 +1,37 @@
+import idb from 'idb';
 /**
  * Common database helper functions.
  */
 if ('serviceWorker' in navigator) {
   //add event listener to the, "loaded" event that the page sends after it has downloaded all the things.
-  window.addEventListener('load', function() {
+  window.addEventListener('load', function () {
     //we tell the browsers service worker to register our script as its main functional script, then on a promise we either
     //tell the user hey you did it or wow you did not do it and spit out either response.
-    navigator.serviceWorker.register('/sw.js').then(function(response) {
+    navigator.serviceWorker.register('/sw.js').then(function (response) {
       console.log('ServiceWorker registration successful with scope: ', response.scope);
-    }, function(err) {
+    }, function (err) {
       console.log('ServiceWorker registration failed: ', err);
       //at this point sw.js runs. Turn the page.
     });
   });
 }
-class DBHelper {
+let dbPromise = idb.open('restaurant_db', 1, upgradeDB => {
+  let store = upgradeDB.createObjectStore('restaurants', {
+    keyPath: 'id',
+  });
+  store.createIndex('by-name', 'name');
+});
+export default class DBHelper {
 
+  static addRestaurantsToDB(objects) {
+    dbPromise.then(db => {
+      const tx = db.transaction('restaurants', 'readwrite');
+      let store = tx.objectStore('restaurants');
+      objects.forEach(function (object) {
+        store.put(object);
+      });
+    });
+  };
   /**
    * Database URL.
    * Change this to restaurants.json file location on your server.
@@ -35,10 +51,19 @@ class DBHelper {
       if (xhr.status === 200) { // Got a success response from server!
         const json = JSON.parse(xhr.responseText);
         // const restaurants = json.restaurants;
+        this.addRestaurantsToDB(json);
         callback(null, json);
       } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
+        dbPromise.then(db => {
+          const tx = db.transaction('restaurants', 'readwrite');
+          let store = tx.objectStore('restaurants');
+          let index = store.index('by-name');
+          index.getAll().then(function (object) {
+            callback(null, json);
+          });
+        });
+        // const error = (`Request failed. Returned status of ${xhr.status}`);
+        // callback(error, null);
       }
     };
     xhr.send();
@@ -175,7 +200,8 @@ class DBHelper {
       title: restaurant.name,
       url: DBHelper.urlForRestaurant(restaurant),
       map: map,
-      animation: google.maps.Animation.DROP}
+      animation: google.maps.Animation.DROP
+    }
     );
     return marker;
   }

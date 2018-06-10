@@ -23,6 +23,7 @@ const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const sourcemaps = require('gulp-sourcemaps');
 const babelify = require('babelify');
+var gutil = require('gulp-util');
 
 // =======================================================================// 
 // !                Default and bulk tasks                                //        
@@ -30,7 +31,10 @@ const babelify = require('babelify');
 
 //main task for building production dir
 gulp.task('build', function (callback) {
-    runSequence('clean', 'webp', ['responsive-jpg', 'responsive-webp', 'copy-sw', 'copy-js'], 'scripts'), callback
+    runSequence( 'clean', ['responsive-jpg', 'responsive-webp', 'copy-sw'], 'scripts'), callback
+});
+gulp.task('webp',function(callback){
+    runSequence('webp'),callback
 });
 
 //delete build to start over from scratch
@@ -84,16 +88,16 @@ gulp.task('webp', () =>
 gulp.task('scripts', function (callback) {
     runSequence('watch', 'browse', callback);
 });
+gulp.task('browserify', function (callback) {
+    runSequence(['b-main','b-info'], callback);
+});
 
-gulp.task('watch', ['minify-css', 'minify-html', 'copy-js'], function () {
+gulp.task('watch', ['minify-css', 'minify-html','browserify'], function () {
     gulp.watch('src/css/**/*.css', ['minify-css']);
-    gulp.watch('src/js/**/*.js', ['copy-js']);
+    gulp.watch('src/js/**/*.js', ['browserify']);
     gulp.watch('src/public/*.html', ['minify-html']);
 });
 
-//   gulp.task('babel', function(callback) {
-//     runSequence(['babel-main','babel-restaurant'],callback);
-//   });
 
 gulp.task('minify-html', function () {
     return gulp.src('src/*.html')
@@ -112,63 +116,55 @@ gulp.task('minify-css', () => {
             stream: true
         }))
 });
+// =======================================================================// 
+//                  javascript crap                                       //        
+// =======================================================================//  
+gulp.task("b-main", function(){
+    return browserify({
+        entries: "./src/js/main.js"
+    })
+    .transform(babelify.configure({
+        presets : ["@babel/preset-env"]
+    }))
+    .bundle()
+    .pipe(source("main.js"))
+    .pipe(buffer())
+    .pipe(sourcemaps.init())
+    .pipe(uglify())
+    .pipe(sourcemaps.write('./maps'))
+    .pipe(gulp.dest("./build/js"))
+    .pipe(browserSync.reload({
+        stream: true
+    }));
+});
+gulp.task("b-info", function(){
+    return browserify({
+        entries: "./src/js/restaurant_info.js"
+    })
+    .transform(babelify.configure({
+        presets : ["@babel/preset-env"]
+    }))
+    .bundle()
+    .pipe(source("restaurant_info.js"))
+    .pipe(buffer())
+    .pipe(sourcemaps.init())
+    .pipe(uglify())
+    .pipe(sourcemaps.write('./maps'))
+    .pipe(gulp.dest("./build/js"))
+    .pipe(browserSync.reload({
+        stream: true
+    }));
+});
 
-// gulp.task('babel-main', () => {
-//     browserify({
-//       entries: 'src/js/main.js',
-//       debug: true
-//     })
-//     .transform(babelify, {
-//         sourceMaps: true
-//       })
-//     .bundle()
-//     .pipe(source('main.js'))
-//     .pipe(buffer())
-//     .pipe(sourcemaps.init({loadMaps: true}))
-//     .pipe(sourcemaps.write('./maps'))
-//     .pipe(gulp.dest('./build/js'))
-//     .pipe(browserSync.reload({
-//         stream: true
-//       }));
-//   });
-
-// gulp.task('babel-restaurant', () => {
-//     browserify({
-//       entries: 'src/js/restaurant_info.js',
-//       debug: true
-//     })
-//     .transform(babelify, {
-//         sourceMaps: true
-//       })
-//     .bundle()
-//     .pipe(source('restaurant_info.js'))
-//     .pipe(buffer())
-//     .pipe(sourcemaps.init({loadMaps: true}))
-//     .pipe(sourcemaps.write('./maps'))
-//     .pipe(gulp.dest('./build/js'))
-//     .pipe(browserSync.reload({
-//         stream: true
-//       }));
-//   });
 // =======================================================================// 
 //                  copy stuff                                            //        
 // =======================================================================// 
-// gulp.task('copy-data', function () {
-//     gulp.src('src/data')
-//         .pipe(gulp.dest('build/data'));
-// });
 
 gulp.task('copy-sw', function () {
     gulp.src('src/sw.js')
         .pipe(gulp.dest('build/'));
 });
-gulp.task('copy-js', function () {
-    gulp.src('src/js/**.js')
-        .pipe(gulp.dest('build/js'))
-        .pipe(browserSync.reload({
-            stream: true
-        }));
-});
+
 
 // =======================================================================// 
 //                   Servers                                              //        

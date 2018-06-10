@@ -1,3 +1,5 @@
+import DBHelper from './dbhelper.js';
+import lazy from './lazyloader.js';
 
 let restaurant;
 var map;
@@ -75,7 +77,7 @@ let fillRestaurantHTML = (restaurant = self.restaurant) => {
   imageSource.className = 'restaurant-img';
   const sourceJpeg = document.createElement('source');
   const sourceWebp = document.createElement('source');
-  imageURL = DBHelper.imageUrlForRestaurant(restaurant);
+  let imageURL = DBHelper.imageUrlForRestaurant(restaurant);
   if (imageURL === '/images/undefined') {
     imageURL = '/images/no_image';
   }

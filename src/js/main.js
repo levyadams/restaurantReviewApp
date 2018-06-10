@@ -1,3 +1,6 @@
+import DBHelper from './dbhelper.js';
+import lazy from './lazyloader.js';
+
 let restaurants,
   neighborhoods,
   cuisines
@@ -72,6 +75,7 @@ let fillCuisinesHTML = (cuisines = self.cuisines) => {
   });
 }
 function loadMap(){
+  console.log('map loaded');
   var script = document.createElement('script');
   script.type = 'text/javascript';
   script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap';
@@ -90,6 +94,7 @@ window.initMap = () => {
     center: loc,
     scrollwheel: false
   });
+  addMarkersToMap();
 }
 
 /**
@@ -123,10 +128,11 @@ let resetRestaurants = (restaurants) => {
   self.restaurants = [];
   const ul = document.getElementById('restaurants-list');
   ul.innerHTML = '';
-
   // Remove all map markers
-  self.markers.forEach(m => m.setMap(null));
-  self.markers = [];
+  if(self.markers){
+    self.markers.forEach(m => m.setMap(null));
+    self.markers = [];
+  }
   self.restaurants = restaurants;
 }
 
@@ -138,9 +144,6 @@ let fillRestaurantsHTML = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
   });
-  if (map) {
-    addMarkersToMap();
-  }
 }
 
 /**
@@ -159,7 +162,7 @@ let createRestaurantHTML = (restaurant) => {
   imageSource.className = 'restaurant-img';
   const sourceJpeg = document.createElement('source');
   const sourceWebp = document.createElement('source');
-  imageURL = DBHelper.imageUrlForRestaurant(restaurant);
+  let imageURL = DBHelper.imageUrlForRestaurant(restaurant);
   if (imageURL === '/images/undefined') {
     imageURL = '/images/no_image';
   }
@@ -209,9 +212,9 @@ let addMarkersToMap = (restaurants = self.restaurants) => {
     // Add marker to the map
     const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
     google.maps.event.addListener(marker, 'click', () => {
-      window.location.href = marker.url
+      window.location.href = marker.url;
     });
-    self.markers.push(marker);
+    markers.push(marker);
   });
 }
 
