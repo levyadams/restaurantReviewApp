@@ -67,7 +67,6 @@ let fetchCuisines = () => {
  */
 let fillCuisinesHTML = (cuisines = self.cuisines) => {
   const select = document.getElementById('cuisines-select');
-
   cuisines.forEach(cuisine => {
     const option = document.createElement('option');
     option.innerHTML = cuisine;
@@ -81,7 +80,6 @@ function loadMap() {
   staticMap.src = markersForStaticMap();
   map = document.getElementById('map');
   map.append(staticMap);
-
 };
 /**
  * Initialize Google map, called from HTML.
@@ -192,15 +190,16 @@ let createRestaurantHTML = (restaurant) => {
   const more = document.createElement('a');
   const text = document.createElement('p');
   const moreDiv = document.createElement('div');
+
   moreDiv.setAttribute("class", "more-div");
   text.setAttribute("class", "more-text");
+
   more.append(moreDiv);
   moreDiv.append(text);
+
   text.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
   moreDiv.setAttribute("aria-label", `${restaurant.name} ${restaurant.neighborhood} ${restaurant.address}`);
-  // more.alt = `${restaurant.name} ${restaurant.neighborhood} ${restaurant.address}`
-
   li.append(more)
 
   return li
@@ -211,23 +210,18 @@ let createRestaurantHTML = (restaurant) => {
  */
 let addMarkersToMap = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
-    console.log(map);
     // Add marker to the map
-    // const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
-    // google.maps.event.addListener(marker, 'click', () => {
-    //   window.location.href = marker.url;
-    // });
-    // markers.push(marker);
+    const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
+    google.maps.event.addListener(marker, 'click', () => {
+      window.location.href = marker.url;
+    });
+    markers.push(marker);
   });
-  return mapAdd;
 }
 
 function markersForStaticMap() {
   let mapAdd = 'https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&size=640x320&zoom=11.5&scale=2&maptype=roadmap'
-
-
   self.restaurants.forEach(restaurant => {
-    console.log(`${restaurant.latlng.lat} and ${restaurant.latlng.lng}`);
     let tmp = `&markers=${restaurant.latlng.lat},${restaurant.latlng.lng}`;
     mapAdd += tmp;
   })

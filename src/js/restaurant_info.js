@@ -11,14 +11,22 @@ window.addEventListener('load', (event) => {
   loadMap();
 });
 document.addEventListener('DOMContentLoaded', (event) => {
-  fetchRestaurantFromURL((error,restaurant)=>{if(error){console.error(error);}});
+  fetchRestaurantFromURL((error, restaurant) => { if (error) { console.error(error); } });
 });
-function loadMap(){
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap';
-  document.body.appendChild(script);
+function loadMap() {
+  let staticMap = document.createElement('img');
+  staticMap.className = 'map-image';
+  staticMap.src = markersForStaticMap();
+  map = document.getElementById('map');
+  map.append(staticMap);
 };
+
+function markersForStaticMap() {
+  let mapAdd = 'https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&size=640x320&zoom=11.5&scale=2&maptype=roadmap'
+  let tmp = `&markers=${restaurant.latlng.lat},${restaurant.latlng.lng}`;
+  mapAdd += tmp;
+  return mapAdd;
+}
 
 window.initMap = () => {
   fetchRestaurantFromURL((error, restaurant) => {
@@ -69,9 +77,9 @@ let fillRestaurantHTML = (restaurant = self.restaurant) => {
   name.innerHTML = restaurant.name;
 
   const address = document.getElementById('restaurant-address');
-  address.setAttribute("aria-label","Restaurant Adress");
+  address.setAttribute("aria-label", "Restaurant Adress");
   address.innerHTML = restaurant.address;
-  
+
   const image = document.createElement('picture');
   const imageSource = document.getElementById('details-img');
   imageSource.className = 'restaurant-img';
@@ -91,8 +99,8 @@ let fillRestaurantHTML = (restaurant = self.restaurant) => {
   image.alt = `Image of ${restaurant.name}`;
   image.append(imageSource, sourceWebp, sourceJpeg);
   let container = document.getElementById('restaurant-container');
-  container.insertBefore(image, container.childNodes[1]); 
-  
+  container.insertBefore(image, container.childNodes[1]);
+
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
 
@@ -115,12 +123,12 @@ let fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours)
 
     const day = document.createElement('td');
     day.innerHTML = key;
-    day.setAttribute("class","table-day");
+    day.setAttribute("class", "table-day");
     row.appendChild(day);
 
     const time = document.createElement('td');
     time.innerHTML = operatingHours[key];
-    time.setAttribute("class","table-time");
+    time.setAttribute("class", "table-time");
     row.appendChild(time);
 
     hours.appendChild(row);
@@ -164,7 +172,7 @@ let createReviewHTML = (review) => {
 
   const rating = document.createElement('p');
   rating.innerHTML = `Rating: ${review.rating}`;
-  rating.setAttribute("class","restaurant-rating");
+  rating.setAttribute("class", "restaurant-rating");
   li.appendChild(rating);
 
   const comments = document.createElement('p');
@@ -177,7 +185,7 @@ let createReviewHTML = (review) => {
 /**
  * Add restaurant name to the breadcrumb navigation menu
  */
-let fillBreadcrumb = (restaurant=self.restaurant) => {
+let fillBreadcrumb = (restaurant = self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
   const li = document.createElement('li');
   li.innerHTML = restaurant.name;

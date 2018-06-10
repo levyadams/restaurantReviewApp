@@ -8,13 +8,13 @@ if ('serviceWorker' in navigator) {
     //we tell the browsers service worker to register our script as its main functional script, then on a promise we either
     //tell the user hey you did it or wow you did not do it and spit out either response.
     navigator.serviceWorker.register('/sw.js').then(function (response) {
-      console.log('ServiceWorker registration successful with scope: ', response.scope);
     }, function (err) {
       console.log('ServiceWorker registration failed: ', err);
       //at this point sw.js runs. Turn the page.
     });
   });
 }
+//create new database with idb-promises library
 let dbPromise = idb.open('restaurant_db', 1, upgradeDB => {
   let store = upgradeDB.createObjectStore('restaurants', {
     keyPath: 'id',
