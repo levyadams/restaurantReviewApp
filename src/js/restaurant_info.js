@@ -1,6 +1,6 @@
 import DBHelper from './dbhelper.js';
 import lazy from './lazyloader.js';
-
+let mymap;
 let restaurant;
 var map;
 
@@ -14,18 +14,24 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchRestaurantFromURL((error, restaurant) => { if (error) { console.error(error); } });
 });
 function loadMap() {
-  let staticMap = document.createElement('img');
-  staticMap.className = 'map-image';
-  staticMap.src = markersForStaticMap();
-  map = document.getElementById('map');
-  map.append(staticMap);
+  mymap = L.map('mapid', { center: [40.722216, -73.987501], zoom: 12 });
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+      '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+      'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    id: 'mapbox.streets'
+  }).addTo(mymap);
+  markersForStaticMap();
 };
 
-function markersForStaticMap() {
-  let mapAdd = 'https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&size=860x320&zoom=11.5&scale=2&maptype=roadmap'
-  let tmp = `&markers=${restaurant.latlng.lat},${restaurant.latlng.lng}`;
-  mapAdd += tmp;
-  return mapAdd;
+function markersForStaticMap(restaurant = self.restaurant) {
+    let marker = L.marker([restaurant.latlng.lat, restaurant.latlng.lng], {
+      keyboard: false,
+      bounceOnAdd: true,
+      bounceOnAddOptions: { duration: 500, height: 100 },
+    }).addTo(mymap);
+    marker.bindPopup(`<a href="${DBHelper.urlForRestaurant(restaurant)}">${restaurant.name}</a>`);
 }
 
 window.initMap = () => {

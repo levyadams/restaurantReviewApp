@@ -32,10 +32,10 @@ var concatCss = require('gulp-concat-css');
 
 //main task for building production dir
 gulp.task('build', function (callback) {
-    runSequence( 'clean', ['responsive-jpg', 'responsive-webp', 'copy-sw'], 'scripts'), callback
+    runSequence('clean', ['responsive-jpg', 'responsive-webp', 'copy-sw'], 'scripts'), callback
 });
-gulp.task('webp',function(callback){
-    runSequence('webp'),callback
+gulp.task('webp', function (callback) {
+    runSequence('webp'), callback
 });
 
 //delete build to start over from scratch
@@ -52,8 +52,8 @@ gulp.task('dev', function (callback) {
 //                  Images and fonts                                      //        
 // =======================================================================//  
 
-gulp.task('images',function(callback){
-    runSequence('clean','webp',['responsive-jpg', 'responsive-webp'],callback);
+gulp.task('images', function (callback) {
+    runSequence('clean', 'webp', ['responsive-jpg', 'responsive-webp'], callback);
 })
 gulp.task('responsive-jpg', function () {
     gulp.src('src/images/*')
@@ -94,86 +94,79 @@ gulp.task('scripts', function (callback) {
 });
 
 gulp.task('browserify', function (callback) {
-    runSequence(['b-main','b-info'], callback);
-});
-
-gulp.task('css', function (callback) {
-    runSequence('minify-css','concat-css', callback);
+    runSequence(['b-main', 'b-info'], callback);
 });
 
 
-gulp.task('watch', ['css', 'minify-html','browserify'], function () {
-    gulp.watch('src/css/**/*.css', ['css']);
+gulp.task('watch', ['css', 'minify-html', 'browserify'], function () {
+    gulp.watch('src/css/*.css', ['css']);
     gulp.watch('src/js/**/*.js', ['browserify']);
-    gulp.watch('src/public/*.html', ['minify-html']);
-    gulp.watch('src/sw.js',['copy-sw']);
-    gulp.watch('src/images',['images']);
+    gulp.watch('src/*.html', ['minify-html']);
+    gulp.watch('src/*.js', ['copy-sw']);
+    gulp.watch('src/images/', ['images']);
 });
 
 gulp.task('minify-html', function () {
     return gulp.src('src/*.html')
-        .pipe(htmlmin({ collapseWhitespace: false }))
+        .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(gulp.dest('build'))
         .pipe(browserSync.reload({
             stream: true
         }))
 });
 
-gulp.task('minify-css', () => {
+gulp.task('css', () => {
     return gulp.src('src/css/*.css')
         .pipe(cleanCSS({ compatibility: 'ie8' }))
+        .pipe(concatCss("bundle.css"))
         .pipe(gulp.dest('build/css'))
         .pipe(browserSync.reload({
-            stream: true
-        }))
+        stream: true
+    }))
 });
 
-gulp.task('concat-css', function () {
-    return gulp.src('assets/**/*.css')
-      .pipe(concatCss("styles/bundle.css"))
-      .pipe(gulp.dest('build/css'));
-  });
+
 
 // =======================================================================// 
 //                  javascript crap                                       //        
 // =======================================================================//  
 
-gulp.task("b-main", function(){
+gulp.task("b-main", function () {
     return browserify({
         entries: "./src/js/main.js"
     })
-    .transform(babelify.configure({
-        presets : ["@babel/preset-env"]
-    }))
-    .bundle()
-    .pipe(source("main.js"))
-    .pipe(buffer())
-    .pipe(sourcemaps.init())
-    .pipe(uglify())
-    .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest("./build/js"))
-    .pipe(browserSync.reload({
-        stream: true
-    }));
+        .transform(babelify.configure({
+            presets: ["@babel/preset-env"]
+        }))
+        .bundle()
+        .pipe(source("main.js"))
+        .pipe(buffer())
+        .pipe(sourcemaps.init())
+        .pipe(uglify())
+        .pipe(sourcemaps.write('./maps'))
+        .pipe(gulp.dest("./build/js"))
+        .pipe(browserSync.reload({
+            stream: true
+        }));
 });
 
-gulp.task("b-info", function(){
+gulp.task("b-info", function () {
     return browserify({
         entries: "./src/js/restaurant_info.js"
     })
-    .transform(babelify.configure({
-        presets : ["@babel/preset-env"]
-    }))
-    .bundle()
-    .pipe(source("restaurant_info.js"))
-    .pipe(buffer())
-    .pipe(sourcemaps.init())
-    .pipe(uglify())
-    .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest("./build/js"))
-    .pipe(browserSync.reload({
-        stream: true
-    }));
+        .transform(babelify.configure({
+            presets: ["@babel/preset-env"]
+        }))
+        .bundle()
+        .pipe(source("restaurant_info.js"))
+        .pipe(buffer())
+        .pipe(sourcemaps.init())
+        .pipe(uglify())
+        .pipe(sourcemaps.write('./maps'))
+        .pipe(gulp.dest("./build/js"))
+        .pipe(browserSync.reload({
+            stream: true
+        }));
 });
 
 // =======================================================================// 
