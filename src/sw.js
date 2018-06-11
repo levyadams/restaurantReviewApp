@@ -7,6 +7,7 @@ let urlToCache = [
   '/restaurant.html',
   '/js/main.js',
   '/js/restaurant_info.js',
+  'https'
 ];
 
   self.addEventListener('fetch', function(event) {
@@ -26,6 +27,7 @@ let urlToCache = [
             function(response) {
               // Check if we received a valid response
               if(!response || response.status !== 200 || response.type !== 'basic') {
+                //this could be more robust possibly
                 return response;
               }
               // IMPORTANT: Clone the response. A response is a stream
@@ -35,6 +37,7 @@ let urlToCache = [
               var responseToCache = response.clone();
               caches.open(staticCacheName)
                 .then(function(cache) {
+                    console.log(responseToCache);
                   cache.put(event.request, responseToCache);
                 });
               return response;

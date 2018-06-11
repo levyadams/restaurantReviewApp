@@ -24,6 +24,7 @@ const buffer = require('vinyl-buffer');
 const sourcemaps = require('gulp-sourcemaps');
 const babelify = require('babelify');
 var gutil = require('gulp-util');
+var concatCss = require('gulp-concat-css');
 
 // =======================================================================// 
 // !                Default and bulk tasks                                //        
@@ -51,6 +52,9 @@ gulp.task('dev', function (callback) {
 //                  Images and fonts                                      //        
 // =======================================================================//  
 
+gulp.task('images',function(callback){
+    runSequence('clean','webp',['responsive-jpg', 'responsive-webp'],callback);
+})
 gulp.task('responsive-jpg', function () {
     gulp.src('src/images/*')
         .pipe(responsive({
@@ -88,16 +92,23 @@ gulp.task('webp', () =>
 gulp.task('scripts', function (callback) {
     runSequence('watch', 'browse', callback);
 });
+
 gulp.task('browserify', function (callback) {
     runSequence(['b-main','b-info'], callback);
 });
 
-gulp.task('watch', ['minify-css', 'minify-html','browserify'], function () {
-    gulp.watch('src/css/**/*.css', ['minify-css']);
-    gulp.watch('src/js/**/*.js', ['browserify']);
-    gulp.watch('src/public/*.html', ['minify-html']);
+gulp.task('css', function (callback) {
+    runSequence('minify-css','concat-css', callback);
 });
 
+
+gulp.task('watch', ['css', 'minify-html','browserify'], function () {
+    gulp.watch('src/css/**/*.css', ['css']);
+    gulp.watch('src/js/**/*.js', ['browserify']);
+    gulp.watch('src/public/*.html', ['minify-html']);
+    gulp.watch('src/sw.js',['copy-sw']);
+    gulp.watch('src/images',['images']);
+});
 
 gulp.task('minify-html', function () {
     return gulp.src('src/*.html')
@@ -116,9 +127,17 @@ gulp.task('minify-css', () => {
             stream: true
         }))
 });
+
+gulp.task('concat-css', function () {
+    return gulp.src('assets/**/*.css')
+      .pipe(concatCss("styles/bundle.css"))
+      .pipe(gulp.dest('build/css'));
+  });
+
 // =======================================================================// 
 //                  javascript crap                                       //        
 // =======================================================================//  
+
 gulp.task("b-main", function(){
     return browserify({
         entries: "./src/js/main.js"
@@ -137,6 +156,7 @@ gulp.task("b-main", function(){
         stream: true
     }));
 });
+
 gulp.task("b-info", function(){
     return browserify({
         entries: "./src/js/restaurant_info.js"
@@ -164,7 +184,6 @@ gulp.task('copy-sw', function () {
     gulp.src('src/sw.js')
         .pipe(gulp.dest('build/'));
 });
-
 
 // =======================================================================// 
 //                   Servers                                              //        

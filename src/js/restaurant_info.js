@@ -22,7 +22,7 @@ function loadMap() {
 };
 
 function markersForStaticMap() {
-  let mapAdd = 'https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&size=640x320&zoom=11.5&scale=2&maptype=roadmap'
+  let mapAdd = 'https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&size=860x320&zoom=11.5&scale=2&maptype=roadmap'
   let tmp = `&markers=${restaurant.latlng.lat},${restaurant.latlng.lng}`;
   mapAdd += tmp;
   return mapAdd;
