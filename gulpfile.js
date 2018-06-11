@@ -35,7 +35,7 @@ var inlineCss = require('gulp-inline-css');
 
 //main task for building production dir
 gulp.task('build', function (callback) {
-    runSequence('clean', ['responsive-jpg', 'responsive-webp', 'copy-sw'], 'scripts'), callback
+    runSequence('clean', ['responsive-jpg', 'responsive-webp', 'copy-sw','copy-manifest'], 'scripts'), callback
 });
 gulp.task('webp', function (callback) {
     runSequence('webp'), callback
@@ -193,7 +193,10 @@ gulp.task('copy-sw', function () {
     gulp.src('src/sw.js')
         .pipe(gulp.dest('build/'));
 });
-
+gulp.task('copy-manifest', function () {
+    gulp.src('src/manifest.json')
+        .pipe(gulp.dest('build/'));
+});
 // =======================================================================// 
 //                   Server                                               //        
 // =======================================================================//  
