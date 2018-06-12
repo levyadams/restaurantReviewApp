@@ -27,9 +27,7 @@
     "buffer": "^5.1.0",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^5.0.0",
     "gulp-babel": "^7.0.1",
-    "gulp-clean-css": "^3.9.4",
     "gulp-cli": "^2.0.1",
     "gulp-concat": "^2.6.1",
     "gulp-htmlmin": "^4.0.0",
@@ -50,8 +48,5 @@
     "source": "0.0.3",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
-  },
-  "dependencies": {
-    "lazysizes": "^4.0.4"
   }
 }
