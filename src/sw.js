@@ -37,7 +37,6 @@ let urlToCache = [
               var responseToCache = response.clone();
               caches.open(staticCacheName)
                 .then(function(cache) {
-                    console.log(responseToCache);
                   cache.put(event.request, responseToCache);
                 });
               return response;
