@@ -32,14 +32,12 @@ var inline = require('gulp-inline');
 gulp.task('build', function (callback) {
     runSequence('clean', ['responsive-jpg', 'responsive-webp', 'copy-sw','copy-manifest','copy-svg','copy-data'], 'scripts'), callback
 });
-gulp.task('webp', function (callback) {
-    runSequence('webp'), callback
-});
 
 //delete build to start over from scratch
 gulp.task('clean', function () {
     return del.sync('build');
 });
+
 
 //for easy reference
 gulp.task('dev', function (callback) {
@@ -51,16 +49,21 @@ gulp.task('dev', function (callback) {
 // =======================================================================//  
 
 gulp.task('images', function (callback) {
-    runSequence('clean', 'webp', ['responsive-jpg', 'responsive-webp'], callback);
+    runSequence('clean', ['responsive-jpg', 'responsive-webp'], callback);
 })
-
 gulp.task('webp', () =>
     gulp.src('src/images/*.jpg')
         .pipe(webp())
         .pipe(gulp.dest('src/images'))
 );
+
+gulp.task('webp-jpg', () =>
+    gulp.src(['src/images/*.jpg'])
+        .pipe(webp())
+        .pipe(gulp.dest('src/images'))
+);
 gulp.task('responsive-jpg', function () {
-    gulp.src('src/images/*')
+    gulp.src(['src/images/**/*'])
         .pipe(responsive({
             '*.jpg': [
                 { width: 1600, suffix: '_large_1x', quality: 40 },
@@ -72,7 +75,7 @@ gulp.task('responsive-jpg', function () {
 });
 
 gulp.task('responsive-webp', function () {
-    gulp.src('src/images/*')
+    gulp.src(['src/images/**/*'])
         .pipe(responsive({
             '*.webp': [
                 { width: 1600, suffix: '_large_1x', quality: 40 },
@@ -93,11 +96,11 @@ gulp.task('scripts', function (callback) {
 });
 
 gulp.task('browserify', function (callback) {
-    runSequence(['b-main'], callback);
+    runSequence(['b-main','b-products','b-about'], callback);
 });
 
 gulp.task('css', function (callback) {
-    runSequence('inline', callback);
+    runSequence('inline','inline2','inline3', callback);
 });
 
 
@@ -117,6 +120,26 @@ gulp.task('inline', function () {
   }))
   .pipe(gulp.dest('build/'));
 });
+
+gulp.task('inline2', function () {
+    return gulp.src('src/products.html')
+   .pipe(inline({
+     base: 'src/',
+     css: [minifyCss],
+     disabledTypes: ['svg', 'img', 'js'] // Only inline css files
+   }))
+   .pipe(gulp.dest('build/'));
+ });
+ 
+gulp.task('inline3', function () {
+    return gulp.src('src/about.html')
+   .pipe(inline({
+     base: 'src/',
+     css: [minifyCss],
+     disabledTypes: ['svg', 'img', 'js'] // Only inline css files
+   }))
+   .pipe(gulp.dest('build/'));
+ });
 
 // gulp.task('minify-html', function() {
 //     return gulp.src('src/restaurant.html')
@@ -140,6 +163,42 @@ gulp.task("b-main", function () {
         }))
         .bundle()
         .pipe(source("main.js"))
+        .pipe(buffer())
+        .pipe(sourcemaps.init())
+        .pipe(uglify())
+        .pipe(sourcemaps.write('./maps'))
+        .pipe(gulp.dest("./build/js"))
+        .pipe(browserSync.reload({
+            stream: true
+        }))
+});
+gulp.task("b-products", function () {
+    return browserify({
+        entries: "./src/js/products.js"
+    })
+        .transform(babelify.configure({
+            presets: ["@babel/preset-env"]
+        }))
+        .bundle()
+        .pipe(source("products.js"))
+        .pipe(buffer())
+        .pipe(sourcemaps.init())
+        .pipe(uglify())
+        .pipe(sourcemaps.write('./maps'))
+        .pipe(gulp.dest("./build/js"))
+        .pipe(browserSync.reload({
+            stream: true
+        }))
+});
+gulp.task("b-about", function () {
+    return browserify({
+        entries: "./src/js/about.js"
+    })
+        .transform(babelify.configure({
+            presets: ["@babel/preset-env"]
+        }))
+        .bundle()
+        .pipe(source("about.js"))
         .pipe(buffer())
         .pipe(sourcemaps.init())
         .pipe(uglify())

@@ -1,30 +1,11 @@
 import lazy from './lazyloader.js';
+import theme from './themeloader.js';
 let postIndex;
 window.addEventListener('DOMContentLoaded', () => {
-  CreateNavBar();
-  FillNavigationBar('products', '/products');
-  FillNavigationBar('about', '/about');
-  
   fetchPosts();
 })
 
-function CreateNavBar() {
-  let container = document.createElement('div');
-  container.id = 'navigation-elements';
-  let navbar = document.getElementById('nav');
-  navbar.append(container);
-}
 
-function FillNavigationBar(name, url) {
-  let container = document.getElementById('navigation-elements');
-  let title = document.createElement('button');
-  title.setAttribute('onclick', `location.href="${url}";`);
-  title.setAttribute('value', `button for ${name}`);
-  title.innerText = name;
-  let tmp = document.createElement('h1');
-  tmp.append(title);
-  container.append(tmp);
-}
 
 function FillFrontPagePosts() {
   let container = document.getElementById('post-list');
@@ -46,7 +27,7 @@ function FillFrontPagePosts() {
     imageSource.className = 'post-img';
     const sourceJpeg = document.createElement('source');
     const sourceWebp = document.createElement('source');
-    let imageURL = `/images/${post.id}`;
+    let imageURL = `${post.media}`;
     if (imageURL === '/images/undefined') {
       imageURL = '/images/no_image';
     }

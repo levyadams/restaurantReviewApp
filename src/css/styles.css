@@ -27,7 +27,9 @@ li {
   background-repeat: no-repeat;
   background-position: 2% -4%;
   background-size:64px 64px; 
-  
+}
+div h2{
+  margin:4%;
 }
 img{
   max-width:100%;
@@ -69,6 +71,13 @@ nav{
   height:64px;
   border:0;
 }
+#logo-alt{
+  font-weight: bold;
+  font-size:2em;
+  color: black;
+  line-height: 4;
+
+}
 #logo-container button{
   font-weight: bold;
   background-color: transparent;
@@ -78,19 +87,19 @@ nav{
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 1.2em;
+}
+#navigation-elements{
+  justify-content: center;
+  font-weight: bold;
 }
 #navigation-elements{
   max-width: 100%;
-  justify-content: center;
-}
-#navigation-elements{
   margin-left:19%;
   display:flex;
   white-space: nowrap;
 }
 #navigation-elements h1{
-  margin-right:15%;
+  margin-right:30%;
 }
 #navigation-elements button{
   background-color:transparent;
@@ -99,11 +108,12 @@ nav{
   color: #ff3b3f;
   text-decoration: none;
   display: inline-block;
-  font-size: 1em;
+  font-size: 1.2em;
 }
 #post-card {
   border-radius: 0px 15px 15px 15px;
-  background-color: rgb(204, 179, 179);
+  background-color: rgb(250, 223, 223);
+  box-shadow: 5px 10px #a8a8a8;
   border: 2px solid #ccc;
   font-family: Arial,sans-serif;
   text-align: center;
@@ -111,7 +121,7 @@ nav{
   /* width:calc((100% - 100px)/4); */
   margin-right:3%;
   margin-left: 20%;
-  margin-bottom:1.5%;
+  margin-bottom:4.5%;
   align-items:center;
   justify-content: center;
 }

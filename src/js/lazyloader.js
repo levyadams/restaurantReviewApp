@@ -8,7 +8,7 @@ function createObserver() {
     rootMargin: "0px",
     threshold: .01
   };
-  const images = document.querySelectorAll('.restaurant-img');
+  const images = document.querySelectorAll('.post-img');
   const observer = new IntersectionObserver(handleIntersect, options);
   images.forEach(image => {
     observer.observe(image);

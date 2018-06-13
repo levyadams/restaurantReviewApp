@@ -1,18 +1,18 @@
 {
     "front_page": [
         {
-            "id": 0,
-            "title": "First Post Evar!",
-            "details": "Wow, can you believe this is our first post ever? Pretty freaking crazy!",
-            "media": 0,
-            "user": "Levi"
+            "id": 1,
+            "title": "EasyAvatar goes commercial",
+            "details": "EasyAvatar(name may change later) only has a few fixes before being submitted! Notice the bleed-through on the skin? This is caused by depth render order being too close together in unity, causing us to see the skin underneath! It also happens from good 'ol fashion meshes moving past each other. To solve this, we use unity render order, a custom shader, and some functional programming methods to ensure people using the asset can add whatever clothing they want without bleed-through or other horrid camera effects. Pretty cool, eh?",
+            "media": "/images/clothesbroken",
+            "user": "@Levi[webmaster/code-munkey]"
         },
         {
-            "id": 1,
-            "title": "second Post Evar!",
-            "details": "Wow, can you believe this is our second post ever? Pretty freaking crazy!",
-            "media": 0,
-            "user": "Levi"
+            "id": 0,
+            "title": "GameDevStudent.com is online!",
+            "details": "Wow, can you believe this is our first post ever? Pretty freaking crazy! This site will be a resource for people learning game development, mainly c#. As our lives progress, so will this website, I'm sure! We plan on offering several small assets for cheaper than you see on the unity asset store for similar packages, as ours will be cut and dry, with not much for bells or whistles. We have found that bulky packages make it hard for people making games who use assets to understand the base functionality of the system they are using. Most of our assets will come with a suite of videos and written tutorials for the game dev student to understand the core of the coding principles, instead of re-coding the same old poorly scoped functions.",
+            "media": "/images/IDE",
+            "user": "@Levi[webmaster/code-munkey]"
         }
     ]
 }

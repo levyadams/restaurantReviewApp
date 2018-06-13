@@ -1,0 +1,26 @@
+@media screen and (min-width: 750px){
+    li {
+        background-repeat: no-repeat;
+        background-position: 7% 2%;
+        background-size:128px 128px; 
+      }
+    #navigation-elements{
+        margin-left:40%;
+      }
+    #logo{
+        display:none;
+    }
+}
+    @media screen and (max-width: 749px){
+        #navigation-elements{
+            margin-left:13%;
+          }
+        #logo{
+            display:inherit;
+        }
+        li{
+        background-size:64px 64px; 
+        background-position: 4% 0%;
+        }
+    }
+    
