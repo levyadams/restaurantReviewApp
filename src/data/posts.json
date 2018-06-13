@@ -1,9 +1,16 @@
 {
-    "posts": [
+    "front_page": [
         {
             "id": 0,
             "title": "First Post Evar!",
             "details": "Wow, can you believe this is our first post ever? Pretty freaking crazy!",
+            "media": 0,
+            "user": "Levi"
+        },
+        {
+            "id": 1,
+            "title": "second Post Evar!",
+            "details": "Wow, can you believe this is our second post ever? Pretty freaking crazy!",
             "media": 0,
             "user": "Levi"
         }

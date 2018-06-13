@@ -30,7 +30,7 @@ var inline = require('gulp-inline');
 
 //main task for building production dir
 gulp.task('build', function (callback) {
-    runSequence('clean', ['responsive-jpg', 'responsive-webp', 'copy-sw','copy-manifest'], 'scripts'), callback
+    runSequence('clean', ['responsive-jpg', 'responsive-webp', 'copy-sw','copy-manifest','copy-svg','copy-data'], 'scripts'), callback
 });
 gulp.task('webp', function (callback) {
     runSequence('webp'), callback
@@ -158,10 +158,22 @@ gulp.task('copy-sw', function () {
     gulp.src('src/sw.js')
         .pipe(gulp.dest('build/'));
 });
+
 gulp.task('copy-manifest', function () {
     gulp.src('src/manifest.json')
         .pipe(gulp.dest('build/'));
 });
+
+gulp.task('copy-svg', function () {
+    gulp.src('src/images/svg/*.svg')
+        .pipe(gulp.dest('build/images/svg'));
+});
+
+gulp.task('copy-data', function () {
+    gulp.src('src/data/posts.json')
+        .pipe(gulp.dest('build/data/'));
+});
+
 // =======================================================================// 
 //                   Server                                               //        
 // =======================================================================//  
