@@ -1,0 +1,11 @@
+{
+    "posts": [
+        {
+            "id": 0,
+            "title": "First Post Evar!",
+            "details": "Wow, can you believe this is our first post ever? Pretty freaking crazy!",
+            "media": 0,
+            "user": "Levi"
+        }
+    ]
+}

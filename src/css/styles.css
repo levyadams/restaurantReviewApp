@@ -51,33 +51,34 @@ article, aside, canvas, details, figcaption, figure, footer, header, nav, sectio
 }
 nav{
   display:flex;
+  max-width:100%;
 }
 #logo-container{
-  font-size: 1.2em;
   margin-left:2%;
   white-space: nowrap;
 }
 #logo-container button{
+  font-weight: bold;
   background-color: transparent;
   border: none;
   color: rgb(0, 0, 0);
-  padding: 48px 48px;
+  padding: 36px 36px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 1.2em;
 }
 #navigation-elements{
+  max-width: 100%;
   justify-content: center;
 }
 #navigation-elements{
   margin-left:15%;
-  width:100%;
   display:flex;
   white-space: nowrap;
 }
 #navigation-elements h1{
-  margin-right:15%;
+  margin-right:10%;
 }
 #navigation-elements button{
   background-color:transparent;
@@ -87,9 +88,21 @@ nav{
   padding: 48px 48px;
   text-decoration: none;
   display: inline-block;
-  font-size: 1.1em;
+  font-size: 1em;
 }
-
+#post-list li{
+  border-radius: 15px 15px 15px 0px;
+  background-color: rgb(204, 179, 179);
+  border: 2px solid #ccc;
+  font-family: Arial,sans-serif;
+  text-align: center;
+  width:75%;
+  /* width:calc((100% - 100px)/4); */
+  margin-right:12.5%;
+  margin-left: 12.5%;
+  align-items:center;
+  justify-content: center;
+}
 /* 
 #maincontent {
   background-color: #7e7e7e;
