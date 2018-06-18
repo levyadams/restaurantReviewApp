@@ -166,6 +166,23 @@ gulp.task("b-main", function () {
         }))
 });
 
+gulp.task("factory", function () {
+    return browserify({
+        entries: "./src/js/simpleIO.js"
+    })
+        .transform(babelify.configure({
+            presets: ["@babel/preset-env"]
+        }))
+        .bundle()
+        .pipe(source("simpleIO.min.js"))
+        .pipe(buffer())
+        .pipe(sourcemaps.init())
+        .pipe(uglify())
+        .pipe(sourcemaps.write('./maps'))
+        .pipe(gulp.dest("./factory/js"));
+        
+});
+
 gulp.task("b-info", function () {
     return browserify({
         entries: "./src/js/restaurant_info.js"
