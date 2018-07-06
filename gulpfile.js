@@ -195,7 +195,29 @@ gulp.task("b-main", function () {
             stream: true
         }))
 });
+<<<<<<< HEAD
 gulp.task("b-products", function () {
+=======
+
+gulp.task("factory", function () {
+    return browserify({
+        entries: "./src/js/simpleIO.js"
+    })
+        .transform(babelify.configure({
+            presets: ["@babel/preset-env"]
+        }))
+        .bundle()
+        .pipe(source("simpleIO.min.js"))
+        .pipe(buffer())
+        .pipe(sourcemaps.init())
+        .pipe(uglify())
+        .pipe(sourcemaps.write('./maps'))
+        .pipe(gulp.dest("./factory/js"));
+        
+});
+
+gulp.task("b-info", function () {
+>>>>>>> 9c35a4088e4d08ed44ee0c23853264f55fc815bb
     return browserify({
             entries: "./src/js/products.js"
         })
