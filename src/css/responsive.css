@@ -16,11 +16,23 @@
             margin-left:13%;
           }
         #logo{
+            padding-right:50%;
             display:inherit;
         }
-        li{
-        background-size:64px 64px; 
-        background-position: 4% 0%;
+        ul{
+            margin:0;
+            padding:0;
+            width: 100%;
         }
+        
+        #post-card{
+            margin:0;
+            width:95%;
+            margin-right:3%;
+            margin-left:1%;
+            margin-bottom:5%;
+
+        }
+
     }
     
