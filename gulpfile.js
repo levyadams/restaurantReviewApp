@@ -96,7 +96,7 @@ gulp.task('webp', () =>
 // =======================================================================//  
 
 gulp.task('scripts', function (callback) {
-    runSequence('watch', 'browse', callback);
+    runSequence('watch','browse', callback);
 });
 
 gulp.task('browserify', function (callback) {
@@ -161,9 +161,7 @@ gulp.task("b-main", function () {
         .pipe(uglify())
         .pipe(sourcemaps.write('./maps'))
         .pipe(gulp.dest("./build/js"))
-        .pipe(browserSync.reload({
-            stream: true
-        }))
+        
 });
 
 gulp.task("b-info", function () {
@@ -180,9 +178,7 @@ gulp.task("b-info", function () {
         .pipe(uglify())
         .pipe(sourcemaps.write('./maps'))
         .pipe(gulp.dest("./build/js"))
-        .pipe(browserSync.reload({
-            stream: true
-        }))
+        
 });
 
 // =======================================================================// 

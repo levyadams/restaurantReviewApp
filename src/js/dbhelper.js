@@ -1,4 +1,6 @@
 import idb from 'idb';
+
+let tmpReviewContainer = {};
 /**
  * Common database helper functions.
  */
@@ -7,24 +9,63 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
     //we tell the browsers service worker to register our script as its main functional script, then on a promise we either
     //tell the user hey you did it or wow you did not do it and spit out either response.
-    navigator.serviceWorker.register('/sw.js').then(function (response) {
-    }, function (err) {
+    checkOfflineReviews();
+    navigator.serviceWorker.register('/sw.js').then(function (response) {}, function (err) {
       console.log('ServiceWorker registration failed: ', err);
       //at this point sw.js runs. Turn the page.
     });
   });
 }
+
+let checkOfflineReviews = () => {
+  offlineReviewsDB.then(db => {
+    const tx = db.transaction('reviews', 'readwrite');
+    let store = tx.objectStore('reviews');
+    let index = store.index('by-name');
+    index.getAll().then(function (object) {
+      if (object.length === 0) {
+        return;
+      } else {
+        DBHelper.submitReview(object);
+        console.log('review sent, huzzah!');
+        store.clear();
+      }
+    })
+  })
+};
+
 //create new database with idb-promises library
-let dbPromise = idb.open('restaurant_db', 1, upgradeDB => {
+let restaurantDB = idb.open('restaurant_db', 1, upgradeDB => {
   let store = upgradeDB.createObjectStore('restaurants', {
     keyPath: 'id',
   });
   store.createIndex('by-name', 'name');
 });
+let reviewsDB = idb.open('reviews_db', 1, upgradeDB => {
+  let store = upgradeDB.createObjectStore('reviews', {
+    keyPath: 'id',
+  });
+  store.createIndex('by-name', 'name');
+});
+let mainUserDB = idb.open('user_db', 1, upgradeDB => {
+  let store = upgradeDB.createObjectStore('mainUser', {
+    keyPath: 'name'
+  });
+  store.createIndex('by-name', 'name');
+
+});
+let offlineReviewsDB = idb.open('offline_review_db', 1, upgradeDB => {
+  let store = upgradeDB.createObjectStore('reviews', {
+    keyPath: 'name'
+  });
+  store.createIndex('by-name', 'name');
+
+});
+
 export default class DBHelper {
 
   static addRestaurantsToDB(objects) {
-    dbPromise.then(db => {
+    restaurantDB.then(db => {
       const tx = db.transaction('restaurants', 'readwrite');
       let store = tx.objectStore('restaurants');
       objects.forEach(function (object) {
@@ -32,6 +73,32 @@ export default class DBHelper {
       });
     });
   };
+  static addReviewsToDB(objects) {
+    reviewsDB.then(db => {
+      const tx = db.transaction('reviews', 'readwrite');
+      let store = tx.objectStore('reviews');
+      objects.forEach(function (object) {
+        store.put(object);
+      });
+    });
+  };
+  static addReviewsToOfflineDB(review) {
+    alert("Offline! Review will be added when reconnected..");
+    offlineReviewsDB.then(db => {
+      const tx = db.transaction('reviews', 'readwrite');
+      let store = tx.objectStore('reviews');
+      store.put(review);
+    });
+  };
+  static addMainUserToDB(object) {
+    mainUserDB.then(db => {
+      const tx = db.transaction('mainUser', 'readwrite');
+      let store = tx.objectStore('mainUser');
+      store.put(object);
+    });
+  };
+
+
   /**
    * Database URL.
    * Change this to restaurants.json file location on your server.
@@ -54,7 +121,7 @@ export default class DBHelper {
         this.addRestaurantsToDB(json);
         callback(null, json);
       } else { // Oops!. Got an error from server.
-        dbPromise.then(db => {
+        restaurantDB.then(db => {
           const tx = db.transaction('restaurants', 'readwrite');
           let store = tx.objectStore('restaurants');
           let index = store.index('by-name');
@@ -67,6 +134,95 @@ export default class DBHelper {
       }
     };
     xhr.send();
+  }
+  static fetchReviews(callback) {
+    fetch('http://localhost:1337/reviews/', {
+        method: 'GET',
+      }).then(res => res.json())
+      .then(response => this.addReviewsToDB(response))
+      .catch(error => console.error('Fetch Reviews Error:', error))
+  }
+
+  static fetchReviewsByID(id, callback) {
+    fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`, {
+        method: 'GET',
+      }).then(res => res.json())
+      .then(res => callback(null, res))
+      .catch(error => console.error('Fetch Reviews Error:', error))
+
+  }
+
+  static fetchMainUser(callback) {
+    mainUserDB.then(db => {
+      const tx = db.transaction('mainUser', 'readwrite');
+      let store = tx.objectStore('mainUser');
+      let index = store.index('by-name');
+      index.getAllKeys().then(function (object) {
+        callback(object);
+      });
+    });
+  };
+
+  static submitReview(review) {
+    tmpReviewContainer = review;
+    fetch('http://localhost:1337/reviews/', {
+        method: 'POST',
+        body: JSON.stringify(review), // data can be `string` or {object}!
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(res => res.json())
+      .then(response => console.log('Success:', JSON.stringify(response)))
+      .catch(error => this.addReviewsToOfflineDB(tmpReviewContainer))
+  }
+
+  static updateReview(id, review) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", `http://localhost:1337/reviews/${id}`);
+    xhr.setRequestHeader("Content-type", "application/json");
+    xhr.onload = () => {
+      console.log(`${xhr.status} is the status after update.`);
+      if (xhr.status === 200) {
+        console.log("submitted!");
+      } else {
+        callback('Review not updated!', null);
+      }
+    }
+    xhr.send(JSON.stringify(review));
+  }
+
+  static favoriteRestaurant(id, isFavorite) {
+    let url = `http://localhost:1337/restaurants/${id}/?`;
+    console.log(isFavorite);
+    if (isFavorite) {
+      var data = {
+        is_favorite: false
+      };
+      fetch(url, {
+          method: 'PUT',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(res => res.json())
+        .then(response => console.log('Success:', JSON.stringify(response)))
+        .catch(error => console.error('Error:', error));
+
+    } else {
+      var data = {
+        is_favorite: true
+      };
+      fetch(url, {
+          method: 'PUT',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(res => res.json())
+        .then(response => console.log('Success:', JSON.stringify(response)))
+        .catch(error => console.error('Error:', error));
+    }
+
   }
 
   /**
@@ -91,6 +247,7 @@ export default class DBHelper {
   /**
    * Fetch restaurants by a cuisine type with proper error handling.
    */
+
   static fetchRestaurantByCuisine(cuisine, callback) {
     // Fetch all restaurants  with proper error handling
     DBHelper.fetchRestaurants((error, restaurants) => {
@@ -123,6 +280,7 @@ export default class DBHelper {
   /**
    * Fetch restaurants by a cuisine and a neighborhood with proper error handling.
    */
+
   static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
     // Fetch all restaurants
     DBHelper.fetchRestaurants((error, restaurants) => {
@@ -201,8 +359,7 @@ export default class DBHelper {
       url: DBHelper.urlForRestaurant(restaurant),
       map: map,
       animation: google.maps.Animation.DROP
-    }
-    );
+    });
     return marker;
   }
 

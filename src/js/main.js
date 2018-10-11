@@ -20,6 +20,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
   document.getElementById("neighborhoods-select").focus();
 });
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js')
+  .then(function(registration) {
+    console.log('Registration successful, scope is:', registration.scope);
+  })
+  .catch(function(error) {
+    console.log('Service worker registration failed, error:', error);
+  });
+}
 /**
  * Fetch all neighborhoods and set their HTML.
  */
@@ -171,6 +180,9 @@ let createRestaurantHTML = (restaurant) => {
   li.id = restaurant.id;
   const name = document.createElement('h1');
   name.innerHTML = restaurant.name;
+  if(restaurant.is_favorite){
+    name.style.color = 'blue';
+  }
   li.append(name);
 
   const image = document.createElement('picture');

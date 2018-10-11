@@ -3,6 +3,16 @@ import lazy from './lazyloader.js';
 let mymap;
 let restaurant;
 var map;
+let currentReviews = [];
+let userReviewRating;
+let userReview = [];
+let favoriteButton;
+let nameFieldInput;
+let hasReviews = false;
+let commentInput;
+let currentUser = {
+  "name": ""
+};
 
 /**
  * Initialize Google map, called from HTML.
@@ -11,10 +21,18 @@ window.addEventListener('load', (event) => {
   loadMap();
 });
 document.addEventListener('DOMContentLoaded', (event) => {
-  fetchRestaurantFromURL((error, restaurant) => { if (error) { console.error(error); } });
+  fetchRestaurantFromURL((error, restaurant) => {
+    if (error) {
+      console.error(error);
+    }
+  });
 });
+
 function loadMap() {
-  mymap = L.map('mapid', { center: [40.722216, -73.987501], zoom: 12 });
+  mymap = L.map('mapid', {
+    center: [40.722216, -73.987501],
+    zoom: 12
+  });
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
     maxZoom: 18,
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
@@ -26,28 +44,26 @@ function loadMap() {
 };
 
 function markersForStaticMap(restaurant = self.restaurant) {
-    let marker = L.marker([restaurant.latlng.lat, restaurant.latlng.lng], {
-      keyboard: false,
-      bounceOnAdd: true,
-      bounceOnAddOptions: { duration: 500, height: 100 },
-    }).addTo(mymap);
-    marker.bindPopup(`<a href="${DBHelper.urlForRestaurant(restaurant)}">${restaurant.name}</a>`);
+  let marker = L.marker([restaurant.latlng.lat, restaurant.latlng.lng], {
+    keyboard: false,
+    bounceOnAdd: true,
+    bounceOnAddOptions: {
+      duration: 500,
+      height: 100
+    },
+  }).addTo(mymap);
+  marker.bindPopup(`<a href="${DBHelper.urlForRestaurant(restaurant)}">${restaurant.name}</a>`);
 }
 
 window.initMap = () => {
-  fetchRestaurantFromURL((error, restaurant) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      self.map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 16,
-        center: restaurant.latlng,
-        scrollwheel: false
-      });
-      fillBreadcrumb();
-      DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
-    }
+
+  self.map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 16,
+    center: restaurant.latlng,
+    scrollwheel: false
   });
+  fillBreadcrumb();
+  DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
 }
 
 /**
@@ -70,10 +86,35 @@ let fetchRestaurantFromURL = (callback) => {
         return;
       }
       fillRestaurantHTML();
+      fetchRestaurantReviews();
+      fetchMainUser();
       callback(null, restaurant)
     });
   }
 }
+let fetchRestaurantReviews = () => {
+  let thisID = self.restaurant.id;
+  DBHelper.fetchReviewsByID(thisID, (error, reviews) => {
+    if (error) {
+      console.error(error);
+    } else {
+      currentReviews = reviews;
+      DBHelper.addReviewsToDB(reviews);
+      if (!hasReviews) {
+        fillReviewsHTML();
+        hasReviews = true;
+      }
+    }
+  });
+}
+
+
+
+let fetchMainUser = () => {
+  DBHelper.fetchMainUser((user) => {
+    currentUser = user;
+  });
+};
 
 /**
  * Create restaurant HTML and add it to the webpage
@@ -114,8 +155,6 @@ let fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
-  fillReviewsHTML();
 }
 
 /**
@@ -141,23 +180,200 @@ let fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours)
   }
 }
 
+let changeRestaurantRating = (rating) => {
+  userReviewRating = rating;
+};
+
+let checkAndSendReview = (user, review) => {
+  let tmpUser = {
+    "name": user
+  }
+  let isUpdate = false;
+  let commentID;
+
+  if (tmpUser.name === "") {
+    alert("Please enter a username!");
+    return;
+  }
+  if (currentUser) {
+    currentReviews.forEach(review => {
+      if (tmpUser.name === review.name) {
+        isUpdate = true;
+        commentID = review.id;
+      }
+    });
+  }
+
+  if (userReviewRating === undefined) {
+    alert("Please choose a rating from 0 (dislike) - 5 (like).");
+  }
+  if (review === "") {
+    alert("Please enter a review!");
+    return;
+  }
+  let newReview = {
+    "restaurant_id": self.restaurant.id,
+    "name": user,
+    "rating": userReviewRating,
+    "comments": review
+  }
+  let updateReview = {
+    "name": tmpUser.name,
+    "rating": userReviewRating,
+    "comments": review
+  }
+  if (isUpdate) {
+    DBHelper.updateReview(commentID, newReview);
+  } else {
+    currentUser = tmpUser;
+    DBHelper.submitReview(newReview);
+    DBHelper.addMainUserToDB(currentUser);
+  }
+  nameFieldInput.innerHTML = '';
+  commentInput.innerHTML = '';
+
+};
+let favoriteOrUnfavoriteRestaurant = () => {
+  if (self.restaurant.is_favorite) {
+    DBHelper.favoriteRestaurant(self.restaurant.id, true);
+    favoriteButton.innerHTML = "Favorite This Restaurant";
+  } else {
+    DBHelper.favoriteRestaurant(self.restaurant.id, false);
+    favoriteButton.innerHTML = "UnFavorite This Restaurant";
+  }
+
+}
+
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-let fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+let fillReviewsHTML = (reviews = currentReviews) => {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h2');
   title.innerHTML = 'Reviews';
   container.appendChild(title);
 
-  if (!reviews) {
+  let userReviewContainer = document.createElement("div");
+  userReviewContainer.setAttribute("class", "user-review-container");
+  let userReviewTitle = document.createElement('h3');
+  userReviewTitle.innerHTML = "Add your review";
+  userReviewContainer.appendChild(userReviewTitle);
+
+  let userReviewFavoriteButton = document.createElement("button");
+  userReviewFavoriteButton.setAttribute("alt", "Button to favorite this website.");
+  favoriteButton = userReviewFavoriteButton;
+  if (self.restaurant.is_favorite === true) {
+    userReviewFavoriteButton.innerHTML = "Unfavorite this place";
+  } else if (self.restaurant.is_favorite === false) {
+    userReviewFavoriteButton.innerHTML = "Favorite this place";
+  }
+  userReviewFavoriteButton.onclick = function () {
+    favoriteOrUnfavoriteRestaurant();
+
+  };
+  userReviewFavoriteButton.setAttribute("class", "favorite-Button");
+  userReviewContainer.appendChild(userReviewFavoriteButton);
+
+
+
+
+  let userReviewNameTitle = document.createElement('h4');
+  userReviewNameTitle.innerHTML = "Your Name";
+  let userReviewNameInput = document.createElement('input');
+  userReviewNameInput.setAttribute("alt", "Enter your name here.");
+
+  nameFieldInput = userReviewNameInput;
+  userReviewNameInput.setAttribute("class", "name-input");
+  userReviewNameInput.innerHTML = "name here";
+  userReviewContainer.appendChild(userReviewNameTitle);
+  userReviewContainer.appendChild(userReviewNameInput);
+
+  let userReviewRatingTitle = document.createElement('h4');
+  userReviewRatingTitle.innerHTML = "Your Rating";
+
+  let ratingButtonContainer = document.createElement('div');
+  ratingButtonContainer.setAttribute("class", "rating-button-container");
+  let zeroRatingButton = document.createElement("button");
+  zeroRatingButton.setAttribute("alt", "Review rating of : 0 (bad)");
+
+  zeroRatingButton.onclick = function () {
+    changeRestaurantRating(0)
+  };
+  zeroRatingButton.innerHTML = "0";
+  ratingButtonContainer.appendChild(zeroRatingButton);
+
+  let oneRatingButton = document.createElement("button");
+  oneRatingButton.setAttribute("alt", "Review rating of : 1");
+  oneRatingButton.innerHTML = "1";
+  oneRatingButton.onclick = function () {
+    changeRestaurantRating(1)
+  };
+
+  ratingButtonContainer.appendChild(oneRatingButton);
+
+  let twoRatingButton = document.createElement("button");
+  twoRatingButton.setAttribute("alt", "Review rating of : 2");
+  twoRatingButton.innerHTML = "2";
+  twoRatingButton.onclick = function () {
+    changeRestaurantRating(2)
+  };
+
+  ratingButtonContainer.appendChild(twoRatingButton);
+
+  let threeRatingButton = document.createElement("button");
+  threeRatingButton.setAttribute("alt", "Review rating of : 3");
+  threeRatingButton.innerHTML = "3";
+  threeRatingButton.onclick = function () {
+    changeRestaurantRating(3)
+  };
+
+  ratingButtonContainer.appendChild(threeRatingButton);
+
+  let fourRatingButton = document.createElement("button");
+  fourRatingButton.setAttribute("alt", "Review rating of : 4");
+  fourRatingButton.innerHTML = "4";
+  fourRatingButton.onclick = function () {
+    changeRestaurantRating(4)
+  };
+
+  ratingButtonContainer.appendChild(fourRatingButton);
+
+  let fiveRatingButton = document.createElement("button");
+  fiveRatingButton.setAttribute("alt", "Review rating of : 5");
+  fiveRatingButton.innerHTML = "5";
+  fiveRatingButton.onclick = function () {
+    changeRestaurantRating(5)
+  };
+  ratingButtonContainer.appendChild(fiveRatingButton);
+  userReviewContainer.appendChild(ratingButtonContainer);
+
+  let userReviewCommentTitle = document.createElement('h4');
+  userReviewCommentTitle.innerHTML = "Your Review";
+  let userReviewCommentInput = document.createElement("input");
+  userReviewCommentInput.setAttribute("alt","enter your review into this box");
+  commentInput = userReviewCommentInput;
+  userReviewCommentInput.setAttribute("class", "comment-box");
+  let userReviewCommentSubmitButton = document.createElement('button');
+  userReviewCommentSubmitButton.setAttribute("alt","Submit your review button.");
+  userReviewCommentSubmitButton.setAttribute("id", "review-submit-button");
+  userReviewCommentSubmitButton.onclick = function () {
+    checkAndSendReview(userReviewNameInput.value, userReviewCommentInput.value)
+  };
+  userReviewCommentSubmitButton.innerHTML = "Submit Review";
+  userReviewContainer.appendChild(userReviewCommentTitle);
+  userReviewContainer.appendChild(userReviewCommentInput);
+  userReviewContainer.appendChild(userReviewCommentSubmitButton);
+
+  container.appendChild(userReviewContainer);
+
+  if (!currentReviews) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
     container.appendChild(noReviews);
     return;
   }
   const ul = document.getElementById('reviews-list');
-  reviews.forEach(review => {
+  currentReviews.forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
   container.appendChild(ul);
@@ -172,9 +388,9 @@ let createReviewHTML = (review) => {
   name.innerHTML = review.name;
   li.appendChild(name);
 
-  const date = document.createElement('p');
-  date.innerHTML = review.date;
-  li.appendChild(date);
+  // const date = document.createElement('p');
+  // date.innerHTML = review.date;
+  // li.appendChild(date);
 
   const rating = document.createElement('p');
   rating.innerHTML = `Rating: ${review.rating}`;
@@ -213,5 +429,3 @@ let getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
-
-
